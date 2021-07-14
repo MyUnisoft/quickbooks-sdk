@@ -1,0 +1,28 @@
+{
+  "name": "quickbooks-node-sdk",
+  "version": "1.0.0",
+  "description": "Modern Quickbooks Node.js API SDK",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fraxken/Quickbooks-Node-SDK.git"
+  },
+  "keywords": [],
+  "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fraxken/Quickbooks-Node-SDK/issues"
+  },
+  "homepage": "https://github.com/fraxken/Quickbooks-Node-SDK#readme",
+  "devDependencies": {
+    "@slimio/eslint-config": "^4.1.0",
+    "@types/node": "^14.6.3"
+  },
+  "dependencies": {
+    "httpie": "^1.1.2",
+    "klona": "^2.0.3"
+  }
+}

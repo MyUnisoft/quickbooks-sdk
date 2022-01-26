@@ -59,7 +59,15 @@ export default abstract class API<T> {
     return data;
   }
 
-  async create() {
-    // TODO
+  async create(entity: T) {
+    const { data } = await httpie.post(
+      this.getURLFor(`${this.entityName}`),
+      {
+        headers: this.quickbooks.requestHeader,
+        body: entity
+      }
+    );
+
+    return data;
   }
 }

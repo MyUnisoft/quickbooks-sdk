@@ -3,7 +3,16 @@ import * as httpie from "@myunisoft/httpie";
 import { klona } from "klona/json";
 
 // Require Internal Dependencies
+import Account from "./API/account";
+import Attachable from "./API/attachable";
+import CreditMemo from "./API/creditMemo";
+import Customer from "./API/customer";
 import Invoice from "./API/invoice";
+import Item from "./API/item";
+import Purchase from "./API/purchase";
+import TaxRate from "./API/taxRate";
+import Vendor from "./API/vendor";
+
 import {
   isNullOrUndefined,
   discoverIntuitConfiguration,
@@ -12,9 +21,9 @@ import {
 
 // CONSTANTS
 const kMaximumMinorVersion = 53;
-const kQueryOperators = new Set(["=", "IN", "<", ">", "<=", ">=", "LIKE"]);
+// const kQueryOperators = new Set(["=", "IN", "<", ">", "<=", ">=", "LIKE"]);
 const kIntuitTokenURL = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer";
-const kIntuitRevokeURL = "https://developer.api.intuit.com/v2/oauth2/tokens/revoke";
+// const kIntuitRevokeURL = "https://developer.api.intuit.com/v2/oauth2/tokens/revoke";
 
 
 function kV3QuickbooksEndpoints(sand) {
@@ -48,7 +57,15 @@ export default class Quickbooks {
   private baseQBURL: URL;
   private realmId: string;
 
+  public Account: Account;
+  public Attachable: Attachable;
+  public CreditMemo: CreditMemo;
+  public Customer: Customer;
   public Invoice: Invoice;
+  public Item: Item;
+  public Purchase: Purchase;
+  public TaxRate: TaxRate;
+  public Vendor: Vendor;
 
   static async discoverIntuitEndpoints() {
     const [Sandbox, Production] = await Promise.all([
@@ -67,7 +84,15 @@ export default class Quickbooks {
     this.refreshToken = options.refreshToken;
     this.sandbox = options.sandbox;
 
+    this.Account = new Account(this);
+    this.Attachable = new Attachable(this);
+    this.CreditMemo = new CreditMemo(this);
+    this.Customer = new Customer(this);
     this.Invoice = new Invoice(this);
+    this.Item = new Item(this);
+    this.Purchase = new Purchase(this);
+    this.TaxRate = new TaxRate(this);
+    this.Vendor = new Vendor(this);
   }
 
   get baseURL() {
@@ -91,16 +116,6 @@ export default class Quickbooks {
   set minorVersion(value: number) {
     this.minorAPIVersion = Math.min(Math.max(Number(value), 1), kMaximumMinorVersion);
   }
-
-  // getURLFor(baseRoute: string, params = {}) {
-  //   const URI = new URL(baseRoute, this.baseQBURL);
-  //   URI.searchParams.set("minorversion", String(this.minorAPIVersion));
-  //   for (const [key, value] of Object.entries(params)) {
-  //     URI.searchParams.set(key, String(value));
-  //   }
-
-  //   return URI;
-  // }
 
   async refreshAccessToken() {
     const auth = Buffer.from(this.consumerKey + ":" + this.consumerSecret).toString("base64");

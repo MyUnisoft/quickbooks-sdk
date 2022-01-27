@@ -11,38 +11,70 @@ interface InvoiceLinkedTxn {
 }
 
 export interface IInvoice extends QB.RootEntityProperties {
-  AllowIPNPayment: boolean;
-  AllowOnlinePayment: boolean;
-  AllowOnlineCreditCardPayment: boolean;
-  AllowOnlineACHPayment: boolean;
-  CustomField: QB.CustomField[];
-  TxnDate: string;
-  DepartmentRef: QB.Reference;
-  CurrencyRef: QB.Reference;
-  LinkedTxn: InvoiceLinkedTxn[];
   Line: QB.InvoiceLine[];
-  TxnTaxDetail: {
-    TotalTax: number;
-    TxnTaxCodeRef?: QB.Reference;
-    TaxLine: QB.TaxLine[];
-  };
-  TransactionLocationType: "WithinFrance" | "FranceOverseas" | "OutsideFranceWithEU" | "OutsideEU";
-  // Reference to a Customer Entity
   CustomerRef: QB.Reference;
-  BillAddr: QB.Addr;
-  ShipAddr?: QB.Addr;
-  FreeFormAddress: boolean;
-  SalesTermRef: QB.Reference;
-  DueDate: string;
-  GlobalTaxCalculation: string;
-  TotalAmt: number;
-  PrintStatus: string;
-  EmailStatus: string;
-  BillEmail: {
-    Address: string;
+  CurrencyRef?: QB.Reference;
+  DocNumber?: string;
+  BillEmail?: {
+    Address?: string;
   };
-  Balance: number;
-  DiscountAmt: number;
+  TxnDate: string;
+  ShipFromAddr?: QB.Addr;
+  ShipDate?: string;
+  TrackingNum?: number;
+  ClassRef?: QB.Reference;
+  PrintStatus?: string;
+  SalesTermRef?: QB.Reference;
+  TxnSource?: string;
+  LinkedTxn?: InvoiceLinkedTxn[];
+  DepositeToAccountRef?: QB.Reference;
+  GlobalTaxCalculation?: "TaxExcluded", "TaxInclusive", "NotApplicable";
+  AllowOnlineACHPayment?: boolean;
+  TransactionLocationType?: string
+  // TransactionLocationType: "WithinFrance" | "FranceOverseas" | "OutsideFranceWithEU" | "OutsideEU";
+  DueDate?: QB.DateType;
+  PrivateNote?: string;
+  BillEmailCc?: {
+    Address?: string;
+  }
+  CustomerMemo?: QB.Reference;
+  EmailStatus?: string;
+  ExchangeRate?: number;
+  Deposit?: number;
+  TxnTaxDetail?: {
+    TotalTax?: number;
+    TxnTaxCodeRef?: QB.Reference;
+    TaxLine?: QB.TaxLine[];
+  };
+  AllowOnlineCreditCardPayment?: boolean;
+  CustomField?: QB.CustomField[];
+  ShipAddr?: QB.Addr;
+  DepartmentRef?: QB.Reference;
+  BillEmailBcc?: {
+    Address?: string;
+  }
+  ShipMethodRef?: QB.Reference;
+  BillAddr?: QB.Addr;
+  ApplyTaxAfterDiscount?: boolean;
+  HomeBalance?: number;
+  DeliveryInfo?: {
+    DeliveryType?: "Email", "Tradeshift";
+    DeliveryTime?: {
+      dateTime?: string;
+    }
+  }
+  TotalAmt?: string;
+  InvoiceLink?: string;
+  RecurDataRef: QB.Reference;
+  TaxExemptionRef?: QB.Reference;
+  Balance?: number;
+  HomeTotalAmt?: number;
+  FreeFormAddress?: boolean;
+  AllowOnlinePayment?: boolean;
+  AllowIPNPayment?: boolean;
+
+  // ?
+  DiscountAmt?: number;
 }
 
 export default class Invoice extends API<IInvoice> {

@@ -27,6 +27,10 @@ export interface Addr {
   CountrySubDivisionCode?: string;
 }
 
+export interface DateType {
+  date?: string;
+}
+
 export interface TaxLine {
   Amount?: number;
   DetailType: "TaxLineDetail";
@@ -41,9 +45,9 @@ export interface TaxLine {
 }
 
 export interface CustomField {
-  DefinitionId: string;
+  DefinitionId?: string;
   StringValue?: string;
-  Type: "StringType";
+  Type?: "StringType";
   Name?: string;
 }
 
@@ -61,25 +65,97 @@ export interface RootEntityProperties {
 
 // ------------------------------------------------------------------
 
-type InvoiceLineDetailType = "SubTotalLineDetail" | "DiscountLineDetail" |
-    "SalesItemLineDetail" | "GroupLineDetail" | "DescriptionOnlyLineDetail";
+/**
+ * Invoice
+ */
+// type InvoiceLineDetailType = "SubTotalLineDetail" | "DiscountLineDetail" |
+//   "SalesItemLineDetail" | "GroupLineDetail" | "DescriptionOnlyLineDetail";
 
-export interface InvoiceLine {
-  Amount: number;
-  DetailType: InvoiceLineDetailType;
-  SalesItemLineDetail?: {
+interface BaseInvoiceLineDetail {
+  Id?: string;
+  Description?: string;
+  LineNum?: string;
+}
+
+interface SalesItemLineDetail extends BaseInvoiceLineDetail {
+  DetailType: "SalesItemLineDetail";
+  SalesItemLineDetail: {
+    TaxInclusiveAmt?: number;
+    DiscountAmt?: number;
     ItemRef?: Reference;
+    ClassRef?: Reference;
+    TaxCodeRef?: Reference;
+    MarkupInfo?: {
+      PriceLevelRef?: Reference;
+      Percent?: number;
+      MarkUpIncomeAccountRef?: Reference;
+    }
+    ItemAccountRef: Reference;
+    ServiceDate: DateType;
+    DiscountRate: number;
     Qty?: number;
     UnitPrice?: number;
-    TaxCodeRef?: Reference;
-    ItemAccountRef: Reference;
-    DiscountAmt?: number;
-  };
-  DiscountLineDetail?: {
-    PercentBased: boolean;
-    DiscountPercent?: number;
-  };
+    TaxClassificaitionRef: Reference;
+  }
+  Amount: number;
 }
+
+interface GroupLineDetail extends BaseInvoiceLineDetail {
+  DetailType: "GroupLineDetail";
+  GroupLineDetail: {
+    Quantity?: number;
+    Line: SalesItemLineDetail[];
+    GroupItemRef: Reference;
+  }
+}
+
+
+interface DescriptionOnlyLineDetail extends BaseInvoiceLineDetail {
+  DetailType: "DescriptionOnlyLineDetail";
+  DescriptionOnlyLineDetail: {
+    TaxCodeRef?: Reference;
+    Date?: DateType
+  }
+  Amount: number;
+}
+
+interface DiscountLineDetail extends BaseInvoiceLineDetail {
+  DetailType: "DiscountLineDetail";
+  DiscountLineDetail: {
+    ClassRef?: Reference;
+    TaxCodeRef?: Reference;
+    DiscountAccountRef?: Reference;
+    PercentBased?: boolean;
+    DismountPercent?: number;
+  }
+  Amount: number;
+}
+
+interface SubTotalLineDetail extends BaseInvoiceLineDetail {
+  DetailType: "SubTotalLineDetail";
+  SubTotalLineDetail: {
+    ItemRef: Reference;
+  }
+  Amount: number;
+}
+
+export type InvoiceLine = SalesItemLineDetail | GroupLineDetail |
+  DescriptionOnlyLineDetail | DiscountLineDetail | SubTotalLineDetail
+
+// export interface InvoiceLine {
+//   Id?: string;
+//   DetailType: InvoiceLineDetailType;
+//   Amount: number;
+//   Description?: string;
+//   LineNum?: string;
+//   SalesItemLineDetail?: SalesItemLineDetail;
+//   DiscountLineDetail?: {
+//     PercentBased: boolean;
+//     DiscountPercent?: number;
+//   };
+//   GroupLineDetail?: GroupLineDetail;
+//   DescriptionOnlyLineDetail?: DescriptionOnlyLineDetail;
+// }
 
 /**
  * Invoice Customer

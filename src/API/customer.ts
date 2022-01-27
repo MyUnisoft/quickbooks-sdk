@@ -6,7 +6,7 @@ import Quickbooks from "..";
 
 interface ICustomer extends QB.RootEntityProperties {
   Taxable: boolean;
-  BillAddr: QB.Addr;
+  BillAddr?: QB.Addr;
   Job: boolean;
   BillWithParent: boolean;
   Balance: number;
@@ -15,12 +15,15 @@ interface ICustomer extends QB.RootEntityProperties {
   PreferredDeliveryMethod: string;
   ARAccountRef: QB.Reference;
   IsProject: boolean;
+  ClientEntityId?: string;
+  GivenName: string;
+  FamilyName: string;
   FullyQualifiedName: string;
   CompanyName: string;
   DisplayName: string;
   PrintOnCheckName: string;
   Active: boolean;
-  PrimaryPhone: {
+  PrimaryPhone?: {
     FreeFormNumber: string;
   };
   PrimaryEmailAddr: {

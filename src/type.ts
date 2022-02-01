@@ -44,6 +44,12 @@ export interface TaxLine {
   };
 }
 
+export interface TxnTaxDetail {
+  TxnTaxCodeRef?: Reference;
+  TotalTax?: number;
+  TaxLine?: TaxLine[];
+}
+
 export interface CustomField {
   DefinitionId?: string;
   StringValue?: string;
@@ -52,15 +58,30 @@ export interface CustomField {
 }
 
 export interface RootEntityProperties {
+  Id?: string;
   domain: string;
   sparse: boolean;
-  Id: string;
-  SyncToken: string;
+  SyncToken?: string;
   MetaData: {
     CreateTime: string;
     LastUpdatedTime: string;
   };
   DocNumber?: string;
+}
+
+export interface MarkupInfo {
+  PriceLevelRef?: Reference;
+  Percent?: number;
+  MarkUpIncomeAccountRef?: Reference;
+}
+
+export type BillableStatusEnum = "Billable" | "NotBillable" | "HadBeenBilled";
+export type GlobalTaxCalculationEnum = "TaxExcluded" | "TaxInclusive" | "NotApplicable"
+
+export interface LinkedTxn {
+  TxnId: string;
+  TxnType: string;
+  TxnLineId?: string;
 }
 
 // ------------------------------------------------------------------
@@ -71,76 +92,54 @@ export interface RootEntityProperties {
 // type InvoiceLineDetailType = "SubTotalLineDetail" | "DiscountLineDetail" |
 //   "SalesItemLineDetail" | "GroupLineDetail" | "DescriptionOnlyLineDetail";
 
-interface BaseInvoiceLineDetail {
-  Id?: string;
-  Description?: string;
-  LineNum?: string;
+interface SalesItemLineDetail {
+  TaxInclusiveAmt?: number;
+  DiscountAmt?: number;
+  ItemRef?: Reference;
+  ClassRef?: Reference;
+  TaxCodeRef?: Reference;
+  MarkupInfo?: MarkupInfo;
+  ItemAccountRef: Reference;
+  ServiceDate: DateType;
+  DiscountRate: number;
+  Qty?: number;
+  UnitPrice?: number;
+  TaxClassificaitionRef: Reference;
 }
+type SalesItemLine = AbstractLine<"SalesItemLineDetail"> & {SalesItemLineDetail: SalesItemLineDetail}
 
-interface SalesItemLineDetail extends BaseInvoiceLineDetail {
-  DetailType: "SalesItemLineDetail";
-  SalesItemLineDetail: {
-    TaxInclusiveAmt?: number;
-    DiscountAmt?: number;
-    ItemRef?: Reference;
-    ClassRef?: Reference;
-    TaxCodeRef?: Reference;
-    MarkupInfo?: {
-      PriceLevelRef?: Reference;
-      Percent?: number;
-      MarkUpIncomeAccountRef?: Reference;
-    }
-    ItemAccountRef: Reference;
-    ServiceDate: DateType;
-    DiscountRate: number;
-    Qty?: number;
-    UnitPrice?: number;
-    TaxClassificaitionRef: Reference;
-  }
-  Amount: number;
+interface GroupLineDetail {
+  Quantity?: number;
+  Line: SalesItemLineDetail[];
+  GroupItemRef: Reference;
 }
+type GroupLine = Omit<AbstractLine<"GroupLineDetail">, "Amount"> & {GroupLineDetail: GroupLineDetail}
 
-interface GroupLineDetail extends BaseInvoiceLineDetail {
-  DetailType: "GroupLineDetail";
-  GroupLineDetail: {
-    Quantity?: number;
-    Line: SalesItemLineDetail[];
-    GroupItemRef: Reference;
-  }
+
+interface DescriptionOnlyLineDetail {
+  TaxCodeRef?: Reference;
+  Date?: DateType
 }
+type DescriptionOnlyLine = AbstractLine<"DescriptionOnlyLineDetail"> & {DescriptionOnlyLineDetail: DescriptionOnlyLineDetail}
 
 
-interface DescriptionOnlyLineDetail extends BaseInvoiceLineDetail {
-  DetailType: "DescriptionOnlyLineDetail";
-  DescriptionOnlyLineDetail: {
-    TaxCodeRef?: Reference;
-    Date?: DateType
-  }
-  Amount: number;
+interface DiscountLineDetail {
+  ClassRef?: Reference;
+  TaxCodeRef?: Reference;
+  DiscountAccountRef?: Reference;
+  PercentBased?: boolean;
+  DismountPercent?: number;
 }
+type DiscountLine = AbstractLine<"DiscountLineDetail"> & {DiscountLineDetail: DiscountLineDetail}
 
-interface DiscountLineDetail extends BaseInvoiceLineDetail {
-  DetailType: "DiscountLineDetail";
-  DiscountLineDetail: {
-    ClassRef?: Reference;
-    TaxCodeRef?: Reference;
-    DiscountAccountRef?: Reference;
-    PercentBased?: boolean;
-    DismountPercent?: number;
-  }
-  Amount: number;
+interface SubTotalLineDetail {
+  ItemRef: Reference;
 }
+type SubTotalLine = AbstractLine<"SubTotalLineDetail"> & {SubTotalLineDetail: SubTotalLineDetail}
 
-interface SubTotalLineDetail extends BaseInvoiceLineDetail {
-  DetailType: "SubTotalLineDetail";
-  SubTotalLineDetail: {
-    ItemRef: Reference;
-  }
-  Amount: number;
-}
 
-export type InvoiceLine = SalesItemLineDetail | GroupLineDetail |
-  DescriptionOnlyLineDetail | DiscountLineDetail | SubTotalLineDetail
+export type InvoiceLine = SalesItemLine | GroupLine |
+DescriptionOnlyLine | DiscountLine | SubTotalLine
 
 // export interface InvoiceLine {
 //   Id?: string;

@@ -6,19 +6,21 @@ import Quickbooks from "..";
 
 interface IAccount extends QB.RootEntityProperties {
   Name: string;
-  SubAccount: boolean;
-  FullyQualifiedName: string;
-  AccountAlias: string;
-  TxnLocationType?: string;
-  Active: boolean;
-  Classification: string;
-  AccountType: string;
-  AccountSubType: string;
-  AcctNum: string;
-  CurrentBalance: number;
-  CurrentBalanceWithSubAccounts: number;
+  AcctNum?: string;
   CurrencyRef: QB.Reference;
+  ParentRef: QB.Reference;
+  Description?: string;
+  Active?: boolean;
+  SubAccount?: boolean;
+  Classification?: string;
+  FullyQualifiedName?: string;
+  TxnLocationType?: "WithinFrance" | "FranceOverseas" | "OutsideFranceWithEU" | "OutsideEU";
+  AccountType: string;
+  CurrentBalanceWithSubAccounts?: number;
+  AccountAlias: string;
   TaxCodeRef?: QB.Reference;
+  AccountSubType: string;
+  CurrentBalance: number;
 }
 
 export default class Account extends API<IAccount> {

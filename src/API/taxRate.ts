@@ -10,14 +10,16 @@ interface EffectiveTaxRate {
 }
 
 interface ITaxRate extends QB.RootEntityProperties {
-  Name: string;
-  Description: string;
-  Active: boolean;
-  RateValue: number;
-  AgencyRef: QB.Reference;
+  RateValue?: string;
+  Name?: string;
+  AgencyRef?: QB.Reference;
+  SpecialTaxType?: string;
+  EffectiveTaxRate?: EffectiveTaxRate[];
+  DisplayType?: string;
   TaxReturnLineRef: QB.Reference;
-  EffectiveTaxRate: EffectiveTaxRate[];
-  SpecialTaxType: string;
+  Active: boolean;
+  OriginalTaxRate?: string;
+  Description: string;
 }
 
 export default class TaxRate extends API<ITaxRate> {

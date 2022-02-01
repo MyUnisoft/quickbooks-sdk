@@ -28,7 +28,7 @@ export interface IInvoice extends QB.RootEntityProperties {
   TxnSource?: string;
   LinkedTxn?: InvoiceLinkedTxn[];
   DepositeToAccountRef?: QB.Reference;
-  GlobalTaxCalculation?: "TaxExcluded", "TaxInclusive", "NotApplicable";
+  GlobalTaxCalculation?: QB.GlobalTaxCalculationEnum;
   AllowOnlineACHPayment?: boolean;
   TransactionLocationType?: string
   // TransactionLocationType: "WithinFrance" | "FranceOverseas" | "OutsideFranceWithEU" | "OutsideEU";

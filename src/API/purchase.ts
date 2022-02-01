@@ -4,8 +4,8 @@ import API from "./API";
 import * as QB from "../type";
 import Quickbooks from "..";
 
-type BillStatus = "Billable" | "NotBillable" | "HasBeenBilled";
-type BillLineType = "ItemBasedExpenseLine" | "AccountBasedExpenseLine";
+// type BillStatus = "Billable" | "NotBillable" | "HasBeenBilled";
+// type BillLineType = "ItemBasedExpenseLine" | "AccountBasedExpenseLine";
 
 interface ItemBasedExpenseLineDetail {
   TaxInclusiveAmt?: number;
@@ -14,69 +14,63 @@ interface ItemBasedExpenseLineDetail {
   PriceLevelRef?: QB.Reference;
   ClassRef?: QB.Reference;
   TaxCodeRef?: QB.Reference;
-  BillableStatus: BillStatus;
+  MarkupInfo?: QB.MarkupInfo;
+  BillableStatus?: QB.BillableStatusEnum;
   Qty?: number;
   UnitPrice?: number;
 }
 
 interface AccountBasedExpenseLineDetail {
   AccountRef: QB.Reference;
-  TaxInclusiveAmt?: number;
-  BillableStatus: BillStatus;
-  CustomerRef?: QB.Reference;
-  TaxCodeRef?: QB.Reference;
   TaxAmount?: number;
+  TaxInclusiveAmt?: number;
+  ClassRef?: QB.Reference;
+  TaxCodeRef?: QB.Reference;
+  MarkupInfo?: QB.MarkupInfo;
+  BillableStatus?: QB.BillableStatusEnum;
+  CustomerRef?: QB.Reference;
 }
-
-// interface AccountBasedExpenseLineDetail {
-//   AccountRef: QB.Reference;
-//   TaxInclusiveAmt?: number;
-//   BillableStatus: BillStatus;
-//   TaxCodeRef?: QB.Reference;
-//   TaxAmount?: number;
-// }
 
 type AccountBasedExpenseLine = QB.AbstractLine<"AccountBasedExpenseLineDetail">
   & { AccountBasedExpenseLineDetail: AccountBasedExpenseLineDetail; };
 type ItemBasedExpenseLine = QB.AbstractLine<"ItemBasedExpenseLineDetail">
-  & { ItemBasedExpenseLineDetail: ItemBasedExpenseLineDetail; };
+  & {
+    ItemBasedExpenseLineDetail: ItemBasedExpenseLineDetail;
+    LinkedTxn?: QB.LinkedTxn[];
+  };
 
 type PurchaseLine = AccountBasedExpenseLine | ItemBasedExpenseLine;
 
-interface PurchaseLinkedTxn {
-  TxnId: string;
-  TxnType: string;
-  TxnLineId?: string;
-}
 
 interface IPurchase extends QB.RootEntityProperties {
-  PurchaseEx: Record<string, unknown>
-  TxnDate: string;
-  PrintStatus?: string;
+  Line: PurchaseLine[];
+  PaymentType: "Cash" | "Check" | "CreditCard";
+  AccountRef: QB.Reference;
+  CurrencyRef?: QB.Reference;
+  TxnDate?: string;
+  PrintStatus: string;
   RemitToAddr?: QB.Addr;
   TxnSource?: string;
-  TotalAmt: number;
-  PaymentType: "Cash" | "Check" | "CreditCard";
-  PaymentMethodRef?: QB.Reference;
-  AccountRef?: QB.Reference;
-  CurrencyRef?: QB.Reference;
-  EntityRef: {
-    value: string;
-    name: string;
-    type: "Vendor" | "Customer" | "Employee";
-  };
-  TxnTaxDetail?: {
-    TotalTax: number;
-    TxnTaxCodeRef?: QB.Reference;
-    TaxLine: QB.TaxLine[];
-  };
-  CustomField: any[];
-  Line: PurchaseLine[];
+  LinkedTxn?: QB.LinkedTxn[];
+  GlobalTaxCalculation?: QB.GlobalTaxCalculationEnum;
   TransactionLocationType?: "WithinFrance" | "FranceOverseas" | "OutsideFranceWithEU" | "OutsideEU";
-  LinkedTxn?: PurchaseLinkedTxn[];
+  DocNumber?: string;
   PrivateNote?: string;
   Credit?: boolean;
-  SyncToken: string;
+  TxnTaxDetail?: QB.TxnTaxDetail;
+  PaymentMethodRef?: QB.Reference;
+  PurchaseEx: Record<string, unknown>
+  EchangeRate?: number;
+  DepartmentRef?: QB.Reference;
+  EntityRef?: QB.Reference;
+  // EntityRef: {
+  //   value: string;
+  //   name: string;
+  //   type: "Vendor" | "Customer" | "Employee";
+  // };
+  IncludeInAnnualTPAR?: boolean;
+  TotalAmt?: string;
+  CustomField?: any[];
 }
 
 export default class Purchase extends API<IPurchase> {

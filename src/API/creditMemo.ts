@@ -5,30 +5,39 @@ import * as QB from "../type";
 import Quickbooks from "..";
 
 interface ICreditMemo extends QB.RootEntityProperties {
-  RemainingCredit: number;
-  CustomField: QB.CustomField[];
-  TxnDate: string;
-  DepartmentRef: QB.Reference;
-  CurrencyRef: QB.Reference;
   Line: QB.InvoiceLine[];
-  TxnTaxDetail: {
-    TotalTax: number;
-    TxnTaxCodeRef?: QB.Reference;
-    TaxLine: QB.TaxLine[];
-  };
-  TransactionLocationType: "WithinFrance" | "FranceOverseas" | "OutsideFranceWithEU" | "OutsideEU";
   CustomerRef: QB.Reference;
-  BillAddr: QB.Addr;
-  ClassRef: QB.Reference;
-  GlobalTaxCalculation: string;
-  TotalAmt: number;
-  PrintStatus: string;
-  EmailStatus: string;
-  BillEmail: {
-    Address: string;
+  CurrencyRef?: QB.Reference;
+  BillEmail?: {
+    Address?: string;
   };
-  Balance: number;
-  DiscountAmt: number;
+  TxnDate?: string;
+  CustomField?: QB.CustomField[];
+  ClassRef?: QB.Reference;
+  PrintStatus?: string;
+  SalesTermRef?: QB.Reference;
+
+  GlobalTaxCalculation?: QB.GlobalTaxCalculationEnum;
+  TotalAmt?: string;
+  InvoiceRef?: QB.Reference;
+  TransactionLocationType?: "WithinFrance" | "FranceOverseas" | "OutsideFranceWithEU" | "OutsideEU";
+  ApplyTaxAfterDiscount?: boolean;
+  DocNumber?: string;
+  PrivateNote?: string;
+  CustomerMemo?: string;
+  TxnTaxDetail?: QB.TxnTaxDetail;
+  PaymentMethodRef?: QB.Reference;
+  ExchangeRate?: number;
+  ShipAddr?: QB.Addr;
+  DepartmentRef?: QB.Reference;
+  EmailStatus?: string;
+  BillAddr?: QB.Addr;
+  HomeBalance?: number;
+  RemainingCredit?: number;
+  RecurDataRef?: QB.Reference;
+  TaxExemptionRef?: QB.Reference;
+  Balance?: number;
+  HomeTotalAmt?: number;
 }
 
 export default class CreditMemo extends API<ICreditMemo> {

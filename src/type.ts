@@ -36,11 +36,11 @@ export interface TaxLine {
   DetailType: "TaxLineDetail";
   TaxLineDetail: {
     TaxRateRef: Reference;
-    PercentBased?: boolean;
-    TaxPercent?: number;
     NetAmountTaxable?: number;
+    PercentBased?: boolean;
     TaxInclusiveAmount?: number;
     OverrideDeltaAmount?: number;
+    TaxPercent?: number;
   };
 }
 

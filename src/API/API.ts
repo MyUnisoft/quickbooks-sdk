@@ -59,7 +59,7 @@ export default abstract class API<T> {
     return data;
   }
 
-  async create(entity: T) {
+  async create(entity: T): Promise<T | unknown> {
     const { data } = await httpie.post(
       this.getURLFor(`${this.entityName}`),
       {

@@ -1,5 +1,4 @@
 // Require Third-party Dependencies
-import * as httpie from "@myunisoft/httpie";
 import { klona } from "klona/json";
 
 // Require Internal Dependencies
@@ -22,7 +21,7 @@ import {
 // CONSTANTS
 const kMaximumMinorVersion = 53;
 // const kQueryOperators = new Set(["=", "IN", "<", ">", "<=", ">=", "LIKE"]);
-const kIntuitTokenURL = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer";
+// const kIntuitTokenURL = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer";
 // const kIntuitRevokeURL = "https://developer.api.intuit.com/v2/oauth2/tokens/revoke";
 
 
@@ -117,27 +116,27 @@ export default class Quickbooks {
     this.minorAPIVersion = Math.min(Math.max(Number(value), 1), kMaximumMinorVersion);
   }
 
-  async refreshAccessToken() {
-    const auth = Buffer.from(this.consumerKey + ":" + this.consumerSecret).toString("base64");
-    const body = new URLSearchParams({
-      grand_type: "refresh_token",
-      refresh_token: this.refreshToken
-    }).toString();
+  // async refreshAccessToken() {
+  //   const auth = Buffer.from(this.consumerKey + ":" + this.consumerSecret).toString("base64");
+  //   const body = new URLSearchParams({
+  //     grand_type: "refresh_token",
+  //     refresh_token: this.refreshToken
+  //   }).toString();
 
-    const headers = {
-      Accept: "application/json",
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: "Basic " + auth
-    };
+  //   const headers = {
+  //     Accept: "application/json",
+  //     "Content-Type": "application/x-www-form-urlencoded",
+  //     Authorization: "Basic " + auth
+  //   };
 
-    const { data } = await httpie.post<any>(kIntuitTokenURL, { body, headers });
-    console.log(data);
+  //   const { data } = await httpie.post<any>(kIntuitTokenURL, { body, headers });
+  //   console.log(data);
 
-    this.accessToken = data.access_token;
-    this.refreshToken = data.refresh_token;
-  }
+  //   this.accessToken = data.access_token;
+  //   this.refreshToken = data.refresh_token;
+  // }
 
-  async revokeAccess() {
-    // TODO
-  }
+  // async revokeAccess() {
+  //   // TODO
+  // }
 }

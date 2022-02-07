@@ -2,7 +2,7 @@ import API from "./API";
 
 // Require Internal Dependencies
 import * as QB from "../type";
-import Quickbooks from "..";
+import Quickbooks from "../quickbooks";
 
 interface EffectiveTaxRate {
   RateValue: number;
@@ -22,7 +22,7 @@ interface ITaxRate extends QB.RootEntityProperties {
   Description: string;
 }
 
-export default class TaxRate extends API<ITaxRate> {
+export class TaxRate extends API<ITaxRate> {
   constructor(parent: Quickbooks) {
     super(parent, {
       entityName: "taxrate"

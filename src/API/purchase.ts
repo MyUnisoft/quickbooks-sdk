@@ -2,7 +2,7 @@ import API from "./API";
 
 // Require Internal Dependencies
 import * as QB from "../type";
-import Quickbooks from "..";
+import Quickbooks from "../quickbooks";
 
 // type BillStatus = "Billable" | "NotBillable" | "HasBeenBilled";
 // type BillLineType = "ItemBasedExpenseLine" | "AccountBasedExpenseLine";
@@ -73,7 +73,7 @@ interface IPurchase extends QB.RootEntityProperties {
   CustomField?: any[];
 }
 
-export default class Purchase extends API<IPurchase> {
+export class Purchase extends API<IPurchase> {
   constructor(parent: Quickbooks) {
     super(parent, {
       entityName: "purchase"

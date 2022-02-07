@@ -2,7 +2,7 @@ import API from "./API";
 
 // Require Internal Dependencies
 import * as QB from "../type";
-import Quickbooks from "..";
+import Quickbooks from "../quickbooks";
 
 interface InvoiceLinkedTxn {
   TxnId: string;
@@ -74,10 +74,10 @@ export interface IInvoice extends QB.RootEntityProperties {
   AllowIPNPayment?: boolean;
 
   // ?
-  DiscountAmt?: number;
+  // DiscountAmt?: number;
 }
 
-export default class Invoice extends API<IInvoice> {
+export class Invoice extends API<IInvoice> {
   constructor(parent: Quickbooks) {
     super(parent, {
       entityName: "invoice"

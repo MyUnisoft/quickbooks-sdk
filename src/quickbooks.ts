@@ -1,0 +1,82 @@
+// Require Third-party Dependencies
+import { klona } from "klona/json";
+
+// Require Internal Dependencies
+import * as APIs from "./API/index";
+
+import {
+  isNullOrUndefined
+} from "./utils";
+
+// CONSTANTS
+const kMaximumMinorVersion = 53;
+
+function kV3QuickbooksEndpoints(sand) {
+  return `https://${sand ? "sandbox-" : ""}quickbooks.api.intuit.com/v3/company/`;
+}
+
+export interface QuickbooksOptions {
+  realmId: string;
+  accessToken: string;
+  sandbox: boolean;
+  minorVersion?: number;
+}
+
+type APITypes = typeof APIs;
+
+export default class Quickbooks implements APITypes {
+  private minorAPIVersion;
+
+  private accessToken: string;
+  private isSandBox = false;
+  private baseQBURL: URL;
+  private realmId: string;
+
+  public Account: typeof APIs.Account;
+  public Attachable: typeof APIs.Attachable;
+  public CreditMemo: typeof APIs.CreditMemo;
+  public Customer: typeof APIs.Customer;
+  public Invoice: typeof APIs.Invoice;
+  public Item: typeof APIs.Item;
+  public Purchase: typeof APIs.Purchase;
+  public TaxRate: typeof APIs.TaxRate;
+  public Vendor: typeof APIs.Vendor;
+
+  constructor(options: QuickbooksOptions) {
+    this.realmId = options.realmId;
+    this.accessToken = options.accessToken;
+    this.sandbox = options.sandbox;
+    this.minorVersion = options.minorVersion ?? kMaximumMinorVersion;
+
+    for (const name of Object.keys(APIs)) {
+      const item = APIs[name];
+      this[item.constructor.name] = new item(this);
+    }
+  }
+
+  get baseURL() {
+    return this.baseQBURL;
+  }
+
+  get requestHeader() {
+    return klona({
+      Authorization: `Bearer ${this.accessToken}`,
+      Accept: "application/json"
+    });
+  }
+
+  set sandbox(value: boolean) {
+    this.isSandBox = isNullOrUndefined(value) ? false : Boolean(value);
+    const URI = new URL(`${kV3QuickbooksEndpoints(this.isSandBox)}${this.realmId}/`);
+
+    this.baseQBURL = URI;
+  }
+
+  set minorVersion(value: number) {
+    this.minorAPIVersion = Math.min(Math.max(Number(value), 1), kMaximumMinorVersion);
+  }
+
+  get minorVersion() {
+    return this.minorAPIVersion;
+  }
+}

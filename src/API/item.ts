@@ -2,7 +2,7 @@ import API from "./API";
 
 // Require Internal Dependencies
 import * as QB from "../type";
-import Quickbooks from "..";
+import Quickbooks from "../quickbooks";
 
 
 interface IItem extends QB.RootEntityProperties {
@@ -42,7 +42,7 @@ interface IItem extends QB.RootEntityProperties {
   TaxClassificationRef?: QB.Reference;
 }
 
-export default class Item extends API<IItem> {
+export class Item extends API<IItem> {
   constructor(parent: Quickbooks) {
     super(parent, {
       entityName: "item"

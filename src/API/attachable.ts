@@ -2,7 +2,7 @@ import API from "./API";
 
 // Require Internal Dependencies
 import * as QB from "../type";
-import Quickbooks from "..";
+import Quickbooks from "../quickbooks";
 
 interface AttachableRef {
   IncludeOnSend?: boolean;
@@ -33,7 +33,7 @@ interface IAttachable extends QB.RootEntityProperties {
   ThumbnailTempDownloadUri?: string;
 }
 
-export default class Attachable extends API<IAttachable> {
+export class Attachable extends API<IAttachable> {
   constructor(parent: Quickbooks) {
     super(parent, { entityName: "attachable" });
   }

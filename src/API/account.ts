@@ -2,7 +2,7 @@ import API from "./API";
 
 // Require Internal Dependencies
 import * as QB from "../type";
-import Quickbooks from "..";
+import Quickbooks from "../quickbooks";
 
 interface IAccount extends QB.RootEntityProperties {
   Name: string;
@@ -23,7 +23,7 @@ interface IAccount extends QB.RootEntityProperties {
   CurrentBalance: number;
 }
 
-export default class Account extends API<IAccount> {
+export class Account extends API<IAccount> {
   constructor(parent: Quickbooks) {
     super(parent, {
       entityName: "account"

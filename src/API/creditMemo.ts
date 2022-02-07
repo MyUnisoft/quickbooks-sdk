@@ -2,7 +2,7 @@ import API from "./API";
 
 // Require Internal Dependencies
 import * as QB from "../type";
-import Quickbooks from "..";
+import Quickbooks from "../quickbooks";
 
 interface ICreditMemo extends QB.RootEntityProperties {
   Line: QB.InvoiceLine[];
@@ -40,7 +40,7 @@ interface ICreditMemo extends QB.RootEntityProperties {
   HomeTotalAmt?: number;
 }
 
-export default class CreditMemo extends API<ICreditMemo> {
+export class CreditMemo extends API<ICreditMemo> {
   constructor(parent: Quickbooks) {
     super(parent, {
       entityName: "creditMemo"

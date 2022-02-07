@@ -3,7 +3,7 @@ import { MockAgent, setGlobalDispatcher } from "@myunisoft/httpie";
 
 // Require Internal Dependencies
 import API from "../../src/API/API" ;
-import Quickbooks from "../../src";
+import Quickbooks from "../../src/quickbooks";
 
 const agent = new MockAgent();
 agent.disableNetConnect();
@@ -12,10 +12,7 @@ setGlobalDispatcher(agent);
 
 describe("API", () => {
   const qb = new Quickbooks({
-    consumerKey: "aze",
-    consumerSecret: "aze",
     accessToken: "aze",
-    refreshToken: "aze",
     realmId: "aze",
     sandbox: true
   });
@@ -67,7 +64,6 @@ describe("API", () => {
       { headers: { "content-type": "application/json" } });
 
     const resultAll = await api.find();
-    // console.log(resultAll);
 
     expect(resultAll[0].message).toBe("find ok");
   });

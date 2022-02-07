@@ -9,7 +9,7 @@ import {
 } from "./utils";
 
 // CONSTANTS
-const kMaximumMinorVersion = 53;
+export const kMaximumMinorVersion = 53;
 
 function kV3QuickbooksEndpoints(sand) {
   return `https://${sand ? "sandbox-" : ""}quickbooks.api.intuit.com/v3/company/`;

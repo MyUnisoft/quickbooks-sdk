@@ -1,8 +1,9 @@
-import Quickbooks, { QuickbooksOptions } from "./quickbooks";
+import Quickbooks, { QuickbooksOptions, kMaximumMinorVersion } from "./quickbooks";
 
 export * from "./API/index";
 export {
-  QuickbooksOptions
+  QuickbooksOptions,
+  kMaximumMinorVersion
 };
 
 export default Quickbooks;

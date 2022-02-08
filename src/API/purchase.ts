@@ -41,7 +41,6 @@ type ItemBasedExpenseLine = QB.AbstractLine<"ItemBasedExpenseLineDetail">
 
 type PurchaseLine = AccountBasedExpenseLine | ItemBasedExpenseLine;
 
-
 interface IPurchase extends QB.RootEntityProperties {
   Line: PurchaseLine[];
   PaymentType: "Cash" | "Check" | "CreditCard";
@@ -63,11 +62,6 @@ interface IPurchase extends QB.RootEntityProperties {
   EchangeRate?: number;
   DepartmentRef?: QB.Reference;
   EntityRef?: QB.Reference;
-  // EntityRef: {
-  //   value: string;
-  //   name: string;
-  //   type: "Vendor" | "Customer" | "Employee";
-  // };
   IncludeInAnnualTPAR?: boolean;
   TotalAmt?: string;
   CustomField?: any[];

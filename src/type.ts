@@ -76,7 +76,7 @@ export interface MarkupInfo {
 }
 
 export type BillableStatusEnum = "Billable" | "NotBillable" | "HadBeenBilled";
-export type GlobalTaxCalculationEnum = "TaxExcluded" | "TaxInclusive" | "NotApplicable"
+export type GlobalTaxCalculationEnum = "TaxExcluded" | "TaxInclusive" | "NotApplicable";
 
 export interface LinkedTxn {
   TxnId: string;

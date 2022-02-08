@@ -4,7 +4,6 @@ import API from "./API";
 import * as QB from "../type";
 import Quickbooks from "../quickbooks";
 
-
 interface IItem extends QB.RootEntityProperties {
   ItemCategoryType: "Service" | "Service";
   Name: string;

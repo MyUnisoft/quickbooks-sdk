@@ -19,6 +19,10 @@ export interface QuickbooksOptions {
   realmId: string;
   accessToken: string;
   sandbox: boolean;
+  /**
+   * @see https://developer.intuit.com/app/developer/qbo/docs/learn/explore-the-quickbooks-online-api/minor-versions
+   * @default 53
+   */
   minorVersion?: number;
 }
 

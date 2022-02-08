@@ -30,7 +30,7 @@ export interface IInvoice extends QB.RootEntityProperties {
   DepositeToAccountRef?: QB.Reference;
   GlobalTaxCalculation?: QB.GlobalTaxCalculationEnum;
   AllowOnlineACHPayment?: boolean;
-  TransactionLocationType?: string
+  TransactionLocationType?: string;
   // TransactionLocationType: "WithinFrance" | "FranceOverseas" | "OutsideFranceWithEU" | "OutsideEU";
   DueDate?: QB.DateType;
   PrivateNote?: string;
@@ -41,11 +41,7 @@ export interface IInvoice extends QB.RootEntityProperties {
   EmailStatus?: string;
   ExchangeRate?: number;
   Deposit?: number;
-  TxnTaxDetail?: {
-    TotalTax?: number;
-    TxnTaxCodeRef?: QB.Reference;
-    TaxLine?: QB.TaxLine[];
-  };
+  TxnTaxDetail?: QB.TxnTaxDetail;
   AllowOnlineCreditCardPayment?: boolean;
   CustomField?: QB.CustomField[];
   ShipAddr?: QB.Addr;
@@ -58,7 +54,7 @@ export interface IInvoice extends QB.RootEntityProperties {
   ApplyTaxAfterDiscount?: boolean;
   HomeBalance?: number;
   DeliveryInfo?: {
-    DeliveryType?: "Email", "Tradeshift";
+    DeliveryType?: "Email" | "Tradeshift";
     DeliveryTime?: {
       dateTime?: string;
     }

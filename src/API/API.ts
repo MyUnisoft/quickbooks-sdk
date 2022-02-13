@@ -3,6 +3,7 @@ import * as httpie from "@myunisoft/httpie";
 
 // Require Internal Dependencies
 import Quickbooks from "../quickbooks";
+import * as QB from "../type";
 
 export interface APIConstructorOptions {
   entityName: string;
@@ -46,9 +47,10 @@ export default abstract class API<T> {
     return data;
   }
 
-  async findOne(id: number): Promise<T> {
+  async findOne(id: number | QB.Reference): Promise<T> {
+    const realId = typeof id === "number" ? id : Number(id.value);
     const { data } = await httpie.get<T>(
-      this.getURLFor(`${this.entityName}/${id}`),
+      this.getURLFor(`${this.entityName}/${realId}`),
       { headers: this.quickbooks.requestHeader }
     );
 

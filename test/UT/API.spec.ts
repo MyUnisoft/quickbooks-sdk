@@ -4,6 +4,7 @@ import { MockAgent, setGlobalDispatcher } from "@myunisoft/httpie";
 // Require Internal Dependencies
 import API from "../../src/API/API" ;
 import Quickbooks from "../../src/quickbooks";
+import * as QB from "../../src/type";
 
 const agent = new MockAgent();
 agent.disableNetConnect();
@@ -33,7 +34,7 @@ describe("API", () => {
   }
   const api = new Test(qb);
 
-  test("findOne", async() => {
+  test("findOne with number", async() => {
     const testId = 62;
     client
       .intercept({
@@ -47,6 +48,25 @@ describe("API", () => {
       { headers: { "content-type": "application/json" } });
 
     const resultAll = await api.findOne(testId);
+
+    expect(resultAll.message).toBe("findOne ok");
+  });
+
+  test("findOne with reference", async() => {
+    const testId = 62;
+    const reference: QB.Reference = { value: "62" };
+    client
+      .intercept({
+        path: `${qb.baseURL.pathname}${entityName}/${testId}?minorversion=53`,
+        method: "GET"
+      })
+      .reply(200, {
+        message: "findOne ok",
+        status: "success"
+      },
+      { headers: { "content-type": "application/json" } });
+
+    const resultAll = await api.findOne(reference);
 
     expect(resultAll.message).toBe("findOne ok");
   });

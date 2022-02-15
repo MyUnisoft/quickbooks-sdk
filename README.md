@@ -14,7 +14,7 @@ $ npm install @myunisoft/quickbooks-node-sdk
 ## Usage example
 
 ```js
-import * as MyUnisoft from "@myunisoft/quickbooks-node-sdk";
+import Quickbooks from "@myunisoft/quickbooks-node-sdk";
 
 // retrieve your token with another package.
 const accessToken = "YourToken";
@@ -195,9 +195,11 @@ export interface QuickbooksOptions {
 #### Basic API function
 
 ```ts
+import * as QB from "../type";
+
 abstract class API<T> {
   async find(): Promise<T[]>
-  async findOne(id: number): Promise<T>
+  async findOne(id: number | QB.Reference): Promise<T>
   async create(entity: T): Promise<T | unknown>
 }
 ```

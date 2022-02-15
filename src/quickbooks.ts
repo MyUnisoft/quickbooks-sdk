@@ -3,6 +3,7 @@ import { klona } from "klona/json";
 
 // Require Internal Dependencies
 import * as APIs from "./API/index";
+import { Reports } from "./reports/reports";
 
 import {
   isNullOrUndefined
@@ -46,16 +47,31 @@ export default class Quickbooks implements APITypes {
   public TaxRate: typeof APIs.TaxRate;
   public Vendor: typeof APIs.Vendor;
 
+  public Reports: Reports;
+
   constructor(options: QuickbooksOptions) {
     this.realmId = options.realmId;
     this.accessToken = options.accessToken;
     this.sandbox = options.sandbox;
     this.minorVersion = options.minorVersion ?? kMaximumMinorVersion;
 
+    this.Reports = new Reports(this);
+
     for (const name of Object.keys(APIs)) {
       const item = APIs[name];
       this[item.constructor.name] = new item(this);
     }
+  }
+
+  getURLFor(baseRoute: string, params = {}) {
+    const URI = new URL(baseRoute, this.baseURL);
+
+    URI.searchParams.set("minorversion", String(this.minorVersion));
+    for (const [key, value] of Object.entries(params)) {
+      URI.searchParams.set(key, String(value));
+    }
+
+    return URI;
   }
 
   get baseURL() {

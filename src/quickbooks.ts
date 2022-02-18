@@ -1,3 +1,6 @@
+// Require Node.js Dependencies
+import crypto from "crypto";
+
 // Require Third-party Dependencies
 import { klona } from "klona/json";
 
@@ -82,5 +85,16 @@ export default class Quickbooks implements APITypes {
 
   get minorVersion() {
     return this.minorAPIVersion;
+  }
+
+  static validateHookSignature(
+    webhookPayload: string, intuitSignature: string, hookToken: string
+  ): boolean {
+    const hash = crypto
+      .createHmac("sha256", hookToken)
+      .update(webhookPayload)
+      .digest("base64");
+
+    return hash === intuitSignature;
   }
 }

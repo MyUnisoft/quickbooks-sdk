@@ -1,3 +1,6 @@
+// Require Node.js Dependencies
+import crypto from "crypto";
+
 // Require Internal Dependencies
 import Quickbooks, { kMaximumMinorVersion } from "../../src";
 
@@ -72,5 +75,20 @@ describe("Quickbooks", () => {
     qb.sandbox = undefined as any;
 
     expect(qb.baseURL.href).toEqual("https://quickbooks.api.intuit.com/v3/company/aze/");
+  });
+
+  test("Quickbooks static validateHookSignature", async() => {
+    const hookToken = "secret";
+    const webhookPayload = "testString";
+
+    const intuitSignature = crypto
+      .createHmac("sha256", hookToken)
+      .update(webhookPayload)
+      .digest("base64");
+
+
+    const hash = Quickbooks.validateHookSignature(webhookPayload, intuitSignature, hookToken);
+
+    expect(hash).toEqual(true);
   });
 });

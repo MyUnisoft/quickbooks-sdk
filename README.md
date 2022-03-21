@@ -49,7 +49,124 @@ export interface QuickbooksOptions {
 }
 ```
 
+## Reports
+
+```js
+import Quickbooks from "@myunisoft/quickbooks-node-sdk";
+
+// retrieve your token with another package.
+const accessToken = "YourToken";
+
+const Qb = new Quickbooks({
+  accessToken,
+  realmId: "0123456789",
+  sandbox: false
+});
+
+const FECs = await Qb.Reports.FEC({
+  start_date: "YYYY-MM-DD"
+});
+
+
+console.log(FECs);
+```
+
+### FEC
+
+<details>
+  <summary>FEC Options</summary>
+
+```ts
+type attachmentEnum = "TEMPORARY" | "NONE";
+
+interface FECReportOptions {
+  attachment?: attachmentEnum;
+  withQboIdentifier?: boolean;
+  start_date: string;
+  end_date?: string;
+  add_due_date?: boolean;
+}
+```
+</details>
+
+<details>
+  <summary>FEC Interface</summary>
+
+```ts
+type ReportBasisEnum = "Cash" | "Accrual";
+
+interface FecRowColData {
+  id?: string;
+  value: string;
+  href?: string;
+}
+
+
+type ColumnTypeEnum = "Account" | "Money";
+interface FecRowColumn {
+  ColType: ColumnTypeEnum;
+  ColTitle?: string;
+  MetaData?: {
+    Name?: string;
+    Value: string;
+  }
+}
+
+interface FecRow {
+  type: "Data" | "Section";
+  ColData: FecRowColData[];
+  Summary?: any;
+  Rows?: any;
+  Header?: any;
+}
+
+interface FEC {
+  Header: {
+    Customer?: string;
+    ReportName?: string;
+    Vendor?: string;
+    Options?: {
+      Name?: string;
+      Value?: string;
+    }
+    Item?: string;
+    Employee?: string;
+    ReportBasis?: ReportBasisEnum;
+    StartPeriod?: string;
+    Class?: string;
+    Currency?: string;
+    EndPeriod?: string;
+    Time?: string;
+    Department?: string;
+    SummarizeColumnsBy?: string;
+  },
+  Rows: {
+    Row: FecRow;
+  },
+  Columns: {
+    Column: FecRowColumn[];
+  }
+}
+```
+</details>
+
+
 ## API
+
+### Basic API function
+
+```ts
+import * as QB from "../type";
+
+abstract class API<T> {
+  async find(): Promise<T[]>
+  async findOne(id: number | QB.Reference): Promise<T>
+  async create(entity: T): Promise<T | unknown>
+}
+```
+
+---
+
 <details>
   <summary>Recurent Interface types</summary>
 
@@ -191,18 +308,6 @@ export interface QuickbooksOptions {
   ```
 </details>
 
-
-#### Basic API function
-
-```ts
-import * as QB from "../type";
-
-abstract class API<T> {
-  async find(): Promise<T[]>
-  async findOne(id: number | QB.Reference): Promise<T>
-  async create(entity: T): Promise<T | unknown>
-}
-```
 
 ---
 ### Account

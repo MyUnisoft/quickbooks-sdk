@@ -73,18 +73,12 @@ interface FECReportOptions {
 export class Reports {
   private quickbooks: Quickbooks;
 
-  // public FEC: FEC;
-
   constructor(quickbooks: Quickbooks) {
     this.quickbooks = quickbooks;
-
-    // this.FEC = new FEC(this);
   }
 
   async FEC(options?: FECReportOptions) {
     const url = this.quickbooks.getURLFor("reports/FECReport", options);
-
-    console.log(url);
 
     const { data } = await httpie.get<FEC[]>(
       url,

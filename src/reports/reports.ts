@@ -65,7 +65,7 @@ type attachmentEnum = "TEMPORARY" | "NONE";
 interface FECReportOptions {
   attachment?: attachmentEnum;
   withQboIdentifier?: boolean;
-  start_date?: string;
+  start_date: string;
   end_date?: string;
   add_due_date?: boolean;
 }

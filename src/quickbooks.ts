@@ -10,7 +10,7 @@ import {
 } from "./utils";
 
 // CONSTANTS
-export const kMaximumMinorVersion = 63;
+export const kMaximumMinorVersion = 53;
 
 function kV3QuickbooksEndpoints(sand) {
   return `https://${sand ? "sandbox-" : ""}quickbooks.api.intuit.com/v3/company/`;
@@ -66,7 +66,7 @@ export default class Quickbooks implements APITypes {
   getURLFor(baseRoute: string, params = {}) {
     const URI = new URL(baseRoute, this.baseURL);
 
-    URI.searchParams.set("minorversion", String(this.minorVersion));
+    // URI.searchParams.set("minorversion", String(this.minorVersion));
     for (const [key, value] of Object.entries(params)) {
       URI.searchParams.set(key, String(value));
     }

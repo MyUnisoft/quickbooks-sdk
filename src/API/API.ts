@@ -4,45 +4,10 @@ import * as httpie from "@myunisoft/httpie";
 // Require Internal Dependencies
 import Quickbooks from "../quickbooks";
 import * as QB from "../type";
+import { ConditionalCriteria, CriteriaObj, criteriaToSQL } from "../utils";
 
 export interface APIConstructorOptions {
   entityName: string;
-}
-
-type typeOperator = "<" | ">" | "=" | "<=" | ">=";
-
-interface ConditionalCriteria {
-  or?: CriteriaObj[] | ConditionalCriteria[];
-  and?: CriteriaObj[] | ConditionalCriteria[];
-}
-
-interface CriteriaObj {
-  field: string;
-  value: string | number;
-  operator: typeOperator;
-}
-
-export function criteriaToSQL(criteria: ConditionalCriteria | CriteriaObj): string {
-  let finalQuery;
-  for (const [key, value] of Object.entries(criteria)) {
-    if (key === "and" || key === "or") {
-      const items: string[] = [];
-      for (const item of value) {
-        items.push(criteriaToSQL(item));
-      }
-      finalQuery = ` (${items.join(` ${key.toUpperCase()} `)}) `;
-
-      continue;
-    }
-
-    if (key === "field" || key === "value" || key === "operator") {
-      const newObj: CriteriaObj = { ...criteria } as CriteriaObj;
-
-      return `${newObj.field} ${newObj.operator} ${newObj.value}`;
-    }
-  }
-
-  return `${finalQuery}`;
 }
 
 export default abstract class API<T> {
@@ -66,46 +31,11 @@ export default abstract class API<T> {
     return URI;
   }
 
-  async find(): Promise<T[]> {
-    const url = this.getURLFor("query");
-    url.searchParams.set("query", `select * from ${this.entityName}`);
-
-    const { data } = await httpie.get<T[]>(
-      url,
-      {
-        headers: {
-          ...this.quickbooks.requestHeader,
-          "Content-Type": "application/text"
-        }
-      }
-    );
-
-    return data;
-  }
-
-  async query(criteria: ConditionalCriteria | CriteriaObj) {
+  async find(criteria?: ConditionalCriteria | CriteriaObj): Promise<T[]> {
     const url = this.getURLFor("query");
 
-
-    const whereQuery = criteriaToSQL(criteria);
-    url.searchParams.set("query", `select * from ${this.entityName} WHERE ${whereQuery}`);
-
-    const { data } = await httpie.get<T[]>(
-      url,
-      {
-        headers: {
-          ...this.quickbooks.requestHeader,
-          "Content-Type": "application/text"
-        }
-      }
-    );
-
-    return data;
-  }
-
-  async rawQuery(query: string): Promise<T[]> {
-    const url = this.getURLFor("query");
-    url.searchParams.set("query", query);
+    const whereQuery = typeof criteria === "undefined" ? "" : ` WHERE ${criteriaToSQL(criteria)}`;
+    url.searchParams.set("query", `select * from ${this.entityName}${whereQuery}`);
 
     const { data } = await httpie.get<T[]>(
       url,
@@ -125,6 +55,23 @@ export default abstract class API<T> {
     const { data } = await httpie.get<T>(
       this.getURLFor(`${this.entityName}/${realId}`),
       { headers: this.quickbooks.requestHeader }
+    );
+
+    return data;
+  }
+
+  async query(query: string): Promise<T[]> {
+    const url = this.getURLFor("query");
+    url.searchParams.set("query", query);
+
+    const { data } = await httpie.get<T[]>(
+      url,
+      {
+        headers: {
+          ...this.quickbooks.requestHeader,
+          "Content-Type": "application/text"
+        }
+      }
     );
 
     return data;

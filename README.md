@@ -155,12 +155,30 @@ interface FEC {
 
 ### Basic API function
 
+#### Utils types
+```ts
+type typeOperator = "<" | ">" | "=" | "<=" | ">=";
+
+export interface ConditionalCriteria {
+  or?: CriteriaObj[] | ConditionalCriteria[];
+  and?: CriteriaObj[] | ConditionalCriteria[];
+}
+
+export interface CriteriaObj {
+  field: string;
+  value: string | number;
+  operator: typeOperator;
+}
+```
+
+#### API Class
 ```ts
 import * as QB from "../type";
 
 abstract class API<T> {
-  async find(): Promise<T[]>
+  async find(criteria?: ConditionalCriteria | CriteriaObj): Promise<T[]>
   async findOne(id: number | QB.Reference): Promise<T>
+  async query(string): Promise<T[]>
   async create(entity: T): Promise<T | unknown>
 }
 ```

@@ -1,4 +1,4 @@
-type typeOperator = "<" | ">" | "=" | "<=" | ">=";
+type typeOperator = "<" | ">" | "=" | "<=" | ">=" | "ILIKE" | "LIKE";
 
 export interface ConditionalCriteria {
   or?: CriteriaObj[] | ConditionalCriteria[];
@@ -23,7 +23,7 @@ export function criteriaToSQL(criteria: ConditionalCriteria | CriteriaObj): stri
     items.push(...value.map((item) => criteriaToSQL(item)));
   }
 
-  return ` (${items.join(` ${conditionalKey.toUpperCase()} `)}) `;
+  return `(${items.join(` ${conditionalKey.toUpperCase()} `)})`;
 }
 
 export function isNullOrUndefined(value: any): boolean {

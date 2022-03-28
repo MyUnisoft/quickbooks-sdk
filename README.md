@@ -157,7 +157,7 @@ interface FEC {
 
 #### Utils types
 ```ts
-type typeOperator = "<" | ">" | "=" | "<=" | ">=";
+type typeOperator = "<" | ">" | "=" | "<=" | ">=" | "ILIKE" | "LIKE;
 
 export interface ConditionalCriteria {
   or?: CriteriaObj[] | ConditionalCriteria[];

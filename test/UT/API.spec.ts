@@ -14,8 +14,8 @@ const kHttpReplyHeaders = { headers: { "content-type": "application/json" } };
 const kEntityName = "test";
 
 
-function initiateHttpieMock(baseURL: string, pathNameURL :string) {
-  const mockClient = kMockHttpAgent.get("https://sandbox-quickbooks.api.intuit.com");
+function initiateHttpieMock(originURL: string, pathNameURL :string) {
+  const mockClient = kMockHttpAgent.get(originURL);
 
   mockClient
     .intercept({

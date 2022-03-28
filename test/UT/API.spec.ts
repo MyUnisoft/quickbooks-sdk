@@ -1,12 +1,13 @@
 // Require Third-party Dependencies
 import * as httpie from "@myunisoft/httpie";
-import { ConditionalCriteria, CriteriaObj } from "../../dist/utils";
 
 // Require Internal Dependencies
-import API from "../../src/API/API" ;
+import { ConditionalCriteria, CriteriaObj } from "../../dist/utils";
 import Quickbooks from "../../src/quickbooks";
+import API from "../../src/API/API" ;
 import * as QB from "../../src/type";
 
+// CONSTANTS
 const kMockHttpAgent = new httpie.MockAgent();
 const kOriginalHttpDispatcher = httpie.getGlobalDispatcher();
 const kHttpReplyHeaders = { headers: { "content-type": "application/json" } };

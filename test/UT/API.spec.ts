@@ -6,7 +6,6 @@ import { ConditionalCriteria, CriteriaObj } from "../../dist/utils";
 import Quickbooks from "../../src/quickbooks";
 import API from "../../src/API/API" ;
 import * as QB from "../../src/type";
-import { MockClient } from "undici";
 
 // CONSTANTS
 const kMockHttpAgent = new httpie.MockAgent();

@@ -9,15 +9,21 @@ import * as QB from "../../src/type";
 
 const kMockHttpAgent = new httpie.MockAgent();
 const kOriginalHttpDispatcher = httpie.getGlobalDispatcher();
-
 const kHttpReplyHeaders = { headers: { "content-type": "application/json" } };
+const kEntityName = "test";
 
-function initiateHttpieMock(qb: Quickbooks, entityName: string) {
+function initiateHttpieMock() {
+  const qb = new Quickbooks({
+    accessToken: "aze",
+    realmId: "aze",
+    sandbox: true
+  });
+
   const mockClient = kMockHttpAgent.get(qb.baseURL.origin);
 
   mockClient
     .intercept({
-      path: (url) => url.startsWith(`${qb.baseURL.pathname}${entityName}`),
+      path: (url) => url.startsWith(`${qb.baseURL.pathname}${kEntityName}`),
       method: "GET"
     })
     .reply(200, {
@@ -37,10 +43,23 @@ function initiateHttpieMock(qb: Quickbooks, entityName: string) {
 
   mockClient
     .intercept({
-      path: (url) => url.startsWith(`${qb.baseURL.pathname}${entityName}`),
+      path: (url) => url.startsWith(`${qb.baseURL.pathname}${kEntityName}`),
       method: "POST"
     })
     .reply(200, {}, kHttpReplyHeaders);
+
+  interface ITest {
+    message: any;
+    status: string;
+  }
+
+  class Test extends API<ITest> {
+    constructor(parent: Quickbooks) {
+      super(parent, { entityName: kEntityName });
+    }
+  }
+
+  return new Test(qb);
 }
 
 beforeAll(() => {
@@ -55,30 +74,8 @@ afterAll(() => {
 
 
 describe("API", () => {
-  const qb = new Quickbooks({
-    accessToken: "aze",
-    realmId: "aze",
-    sandbox: true
-  });
-
-  const baseUrl = qb.baseURL.origin;
-  const client = kMockHttpAgent.get(baseUrl);
-  const entityName = "test";
-
-  interface ITest {
-    message: any;
-    status: string;
-  }
-
-  class Test extends API<ITest> {
-    constructor(parent: Quickbooks) {
-      super(parent, { entityName });
-    }
-  }
-  const api = new Test(qb);
-
   test("findOne with number", async() => {
-    initiateHttpieMock(qb, entityName);
+    const api = initiateHttpieMock();
 
     const testId = 62;
     const resultAll = await api.findOne(testId);
@@ -89,7 +86,7 @@ describe("API", () => {
   test("findOne with reference", async() => {
     const reference: QB.Reference = { value: "62" };
 
-    initiateHttpieMock(qb, entityName);
+    const api = initiateHttpieMock();
 
     const resultAll = await api.findOne(reference);
 
@@ -97,7 +94,7 @@ describe("API", () => {
   });
 
   test("find", async() => {
-    initiateHttpieMock(qb, entityName);
+    const api = initiateHttpieMock();
 
     const resultAll = await api.find();
 
@@ -106,7 +103,7 @@ describe("API", () => {
 
   test("find with criteria as CriteriaObj", async() => {
     const objTest: CriteriaObj = { field: "test2", operator: ">", value: "10" };
-    initiateHttpieMock(qb, entityName);
+    const api = initiateHttpieMock();
 
     const resultAll = await api.find(objTest);
 
@@ -131,7 +128,7 @@ describe("API", () => {
       ]
     };
 
-    initiateHttpieMock(qb, entityName);
+    const api = initiateHttpieMock();
 
     const resultAll = await api.find(objTest);
 
@@ -139,7 +136,7 @@ describe("API", () => {
   });
 
   test("query", async() => {
-    initiateHttpieMock(qb, entityName);
+    const api = initiateHttpieMock();
 
     const resultAll = await api.query("test = 'foobar'");
 
@@ -147,12 +144,7 @@ describe("API", () => {
   });
 
   test("create", async() => {
-    client
-      .intercept({
-        path: `${qb.baseURL.pathname}${entityName}?minorversion=53`,
-        method: "POST"
-      })
-      .reply(200, {});
+    const api = initiateHttpieMock();
 
     const result = await api.create({
       message: "create ok",

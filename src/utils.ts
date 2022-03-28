@@ -13,7 +13,9 @@ export interface CriteriaObj {
 
 export function criteriaToSQL(criteria: ConditionalCriteria | CriteriaObj): string {
   if ("field" in criteria) {
-    return `${criteria.field} ${criteria.operator} ${criteria.value}`;
+    const value = typeof criteria.value === "number" ? criteria.value : `'${criteria.value}'`;
+
+    return `${criteria.field} ${criteria.operator} ${value}`;
   }
 
   let conditionalKey;

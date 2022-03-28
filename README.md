@@ -157,7 +157,7 @@ interface FEC {
 
 #### Utils types
 ```ts
-type typeOperator = "<" | ">" | "=" | "<=" | ">=" | "ILIKE" | "LIKE;
+type typeOperator = "<" | ">" | "=" | "<=" | ">=" | "ILIKE" | "LIKE";
 
 export interface ConditionalCriteria {
   or?: CriteriaObj[] | ConditionalCriteria[];
@@ -178,7 +178,7 @@ import * as QB from "../type";
 abstract class API<T> {
   async find(criteria?: ConditionalCriteria | CriteriaObj): Promise<T[]>
   async findOne(id: number | QB.Reference): Promise<T>
-  async query(string): Promise<T[]>
+  async query(query: string): Promise<T[]>
   async create(entity: T): Promise<T | unknown>
 }
 ```

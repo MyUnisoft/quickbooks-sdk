@@ -15,12 +15,12 @@ const kHttpReplyHeaders = { headers: { "content-type": "application/json" } };
 const kEntityName = "test";
 
 
-function initiateHttpieMock(baseURl :string, entityName) {
-  const mockClient = kMockHttpAgent.get(qb.baseURL.origin);
+function initiateHttpieMock(baseURL: string, pathNameURL :string) {
+  const mockClient = kMockHttpAgent.get("https://sandbox-quickbooks.api.intuit.com");
 
   mockClient
     .intercept({
-      path: (url) => url.startsWith(`${qb.baseURL.pathname}${kEntityName}`),
+      path: (url) => url.startsWith(`${pathNameURL}${kEntityName}`),
       method: "GET"
     })
     .reply(200, {
@@ -30,7 +30,7 @@ function initiateHttpieMock(baseURl :string, entityName) {
 
   mockClient
     .intercept({
-      path: (url) => url.startsWith(`${qb.baseURL.pathname}query`),
+      path: (url) => url.startsWith(`${pathNameURL}query`),
       method: "GET"
     })
     .reply(200, [{
@@ -40,7 +40,7 @@ function initiateHttpieMock(baseURl :string, entityName) {
 
   mockClient
     .intercept({
-      path: (url) => url.startsWith(`${qb.baseURL.pathname}${kEntityName}`),
+      path: (url) => url.startsWith(`${pathNameURL}${kEntityName}`),
       method: "POST"
     })
     .reply(200, {}, kHttpReplyHeaders);
@@ -54,8 +54,6 @@ const qb = new Quickbooks({
   sandbox: true
 });
 
-const baseUrl = qb.baseURL.href;
-
 interface ITest {
   message: any;
   status: string;
@@ -66,7 +64,6 @@ class Test extends API<ITest> {
     super(parent, { entityName: kEntityName });
   }
 }
-
 const api = new Test(qb);
 
 beforeAll(() => {
@@ -79,10 +76,11 @@ afterAll(() => {
   httpie.setGlobalDispatcher(kOriginalHttpDispatcher);
 });
 
+
 describe("API", () => {
   let mockClient;
-  beforeEach(async() => {
-    mockClient = initiateHttpieMock(baseUrl, kEntityName);
+  beforeEach(() => {
+    mockClient = initiateHttpieMock(qb.baseURL.origin, qb.baseURL.pathname);
   });
 
   afterEach(async() => {
@@ -105,8 +103,6 @@ describe("API", () => {
   });
 
   test("find", async() => {
-    initiateHttpieMock(baseUrl, kEntityName);
-
     const resultAll = await api.find();
 
     expect(resultAll[0].message).toBe("find ok");

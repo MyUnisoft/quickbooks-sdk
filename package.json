@@ -8,6 +8,9 @@
     "build": "rimraf dist && tsc",
     "test": "jest --projects jest_ut.config.js"
   },
+  "publishConfig": {
+    "@myunisoft:registry": "https://registry.npmjs.org/"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fraxken/Quickbooks-Node-SDK.git"

@@ -1,14 +1,16 @@
-// Require Third-party Dependencies
+// Import Third-party Dependencies
 import * as httpie from "@myunisoft/httpie";
 
-// Require Internal Dependencies
+// Import Internal Dependencies
 import Quickbooks from "../quickbooks";
 import * as QB from "../type";
-import { ConditionalCriteria, CriteriaObj, criteriaToSQL } from "../utils";
+import { SQLConditionalCriteria, SQLCriteria, criteriaToSQL } from "../utils";
 
 export interface APIConstructorOptions {
   entityName: string;
 }
+
+export { SQLConditionalCriteria, SQLCriteria };
 
 export default abstract class API<T> {
   private quickbooks: Quickbooks;
@@ -16,11 +18,10 @@ export default abstract class API<T> {
 
   constructor(quickbooks: Quickbooks, options: APIConstructorOptions) {
     this.quickbooks = quickbooks;
-
     this.entityName = options.entityName;
   }
 
-  getURLFor(baseRoute: string, params = {}) {
+  getURLFor(baseRoute: string, params: Record<string, string> = {}) {
     const URI = new URL(baseRoute, this.quickbooks.baseURL);
 
     URI.searchParams.set("minorversion", String(this.quickbooks.minorVersion));
@@ -31,7 +32,7 @@ export default abstract class API<T> {
     return URI;
   }
 
-  async find(criteria?: ConditionalCriteria | CriteriaObj): Promise<T[]> {
+  async find(criteria?: SQLConditionalCriteria | SQLCriteria): Promise<T[]> {
     const url = this.getURLFor("query");
 
     const whereQuery = typeof criteria === "undefined" ? "" : ` WHERE ${criteriaToSQL(criteria)}`;
@@ -60,9 +61,9 @@ export default abstract class API<T> {
     return data;
   }
 
-  async query(query: string): Promise<T[]> {
+  async query(sql: string): Promise<T[]> {
     const url = this.getURLFor("query");
-    url.searchParams.set("query", query);
+    url.searchParams.set("query", sql);
 
     const { data } = await httpie.get<T[]>(
       url,

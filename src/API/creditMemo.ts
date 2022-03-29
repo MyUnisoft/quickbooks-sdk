@@ -1,10 +1,9 @@
+// Import Internal Dependencies
 import API from "./API";
-
-// Require Internal Dependencies
 import * as QB from "../type";
 import Quickbooks from "../quickbooks";
 
-interface ICreditMemo extends QB.RootEntityProperties {
+export interface ICreditMemo extends QB.RootEntityProperties {
   Line: QB.InvoiceLine[];
   CustomerRef: QB.Reference;
   CurrencyRef?: QB.Reference;

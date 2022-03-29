@@ -1,17 +1,17 @@
-type typeOperator = "<" | ">" | "=" | "<=" | ">=" | "ILIKE" | "LIKE";
+export type SQLOperator = "<" | ">" | "=" | "<=" | ">=" | "ILIKE" | "LIKE";
 
-export interface ConditionalCriteria {
-  or?: CriteriaObj[] | ConditionalCriteria[];
-  and?: CriteriaObj[] | ConditionalCriteria[];
+export interface SQLConditionalCriteria {
+  or?: SQLCriteria[] | SQLConditionalCriteria[];
+  and?: SQLCriteria[] | SQLConditionalCriteria[];
 }
 
-export interface CriteriaObj {
+export interface SQLCriteria {
   field: string;
-  value: string | number;
-  operator: typeOperator;
+  value: string | number | boolean | null;
+  operator: SQLOperator;
 }
 
-export function criteriaToSQL(criteria: ConditionalCriteria | CriteriaObj): string {
+export function criteriaToSQL(criteria: SQLConditionalCriteria | SQLCriteria): string {
   if ("field" in criteria) {
     const value = typeof criteria.value === "string" ? `'${criteria.value}'` : criteria.value;
 

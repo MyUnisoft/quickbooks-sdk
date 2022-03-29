@@ -1,21 +1,17 @@
-// Require Third-party Dependencies
+// Import Third-party Dependencies
 import * as httpie from "@myunisoft/httpie";
 
-// Require Internal Dependencies
+// Import Internal Dependencies
 import Quickbooks from "../quickbooks";
 
-type ReportBasisEnum = "Cash" | "Accrual";
-
-interface FecRowColData {
+export interface FECRowColData {
   id?: string;
   value: string;
   href?: string;
 }
 
-
-type ColumnTypeEnum = "Account" | "Money";
-interface FecRowColumn {
-  ColType: ColumnTypeEnum;
+export interface FECRowColumn {
+  ColType: "Account" | "Money";
   ColTitle?: string;
   MetaData?: {
     Name?: string;
@@ -23,15 +19,15 @@ interface FecRowColumn {
   }
 }
 
-interface FecRow {
+export interface FECRow {
   type: "Data" | "Section";
-  ColData: FecRowColData[];
+  ColData: FECRowColData[];
   Summary?: any;
   Rows?: any;
   Header?: any;
 }
 
-interface FEC {
+export interface FEC {
   Header: {
     Customer?: string;
     ReportName?: string;
@@ -42,7 +38,7 @@ interface FEC {
     }
     Item?: string;
     Employee?: string;
-    ReportBasis?: ReportBasisEnum;
+    ReportBasis?: "Cash" | "Accrual";
     StartPeriod?: string;
     Class?: string;
     Currency?: string;
@@ -52,18 +48,15 @@ interface FEC {
     SummarizeColumnsBy?: string;
   },
   Rows: {
-    Row: FecRow;
+    Row: FECRow;
   },
   Columns: {
-    Column: FecRowColumn[];
+    Column: FECRowColumn[];
   }
 }
 
-
-type attachmentEnum = "TEMPORARY" | "NONE";
-
-interface FECReportOptions {
-  attachment?: attachmentEnum;
+export interface FECReportOptions {
+  attachment?: "TEMPORARY" | "NONE";
   withQboIdentifier?: boolean;
   start_date: string;
   end_date?: string;

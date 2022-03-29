@@ -1,10 +1,9 @@
+// Import Internal Dependencies
 import API from "./API";
-
-// Require Internal Dependencies
 import * as QB from "../type";
 import Quickbooks from "../quickbooks";
 
-interface AttachableRef {
+export interface AttachableRef {
   IncludeOnSend?: boolean;
   LineInfo?: string;
   NoRefOnly?: boolean;
@@ -16,7 +15,7 @@ interface AttachableRef {
   };
 }
 
-interface IAttachable extends QB.RootEntityProperties {
+export interface IAttachable extends QB.RootEntityProperties {
   FileName: string;
   Note?: string;
   Category?: "Contact Photo" | "Document" | "Image" | "Receipt" | "Signature" | "Sound" | "Other";

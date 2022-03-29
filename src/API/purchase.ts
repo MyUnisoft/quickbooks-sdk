@@ -1,11 +1,7 @@
+// Import Internal Dependencies
 import API from "./API";
-
-// Require Internal Dependencies
 import * as QB from "../type";
 import Quickbooks from "../quickbooks";
-
-// type BillStatus = "Billable" | "NotBillable" | "HasBeenBilled";
-// type BillLineType = "ItemBasedExpenseLine" | "AccountBasedExpenseLine";
 
 interface ItemBasedExpenseLineDetail {
   TaxInclusiveAmt?: number;
@@ -41,7 +37,7 @@ type ItemBasedExpenseLine = QB.AbstractLine<"ItemBasedExpenseLineDetail">
 
 type PurchaseLine = AccountBasedExpenseLine | ItemBasedExpenseLine;
 
-interface IPurchase extends QB.RootEntityProperties {
+export interface IPurchase extends QB.RootEntityProperties {
   Line: PurchaseLine[];
   PaymentType: "Cash" | "Check" | "CreditCard";
   AccountRef: QB.Reference;

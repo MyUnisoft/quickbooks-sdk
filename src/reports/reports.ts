@@ -76,6 +76,7 @@ export class Reports {
     const { data } = await httpie.get<FEC[]>(
       url,
       {
+        limit: this.quickbooks.ratelimit,
         headers: {
           ...this.quickbooks.requestHeader,
           "Content-Type": "application/json"

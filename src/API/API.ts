@@ -41,6 +41,7 @@ export default abstract class API<T> {
     const { data } = await httpie.get<T[]>(
       url,
       {
+        limit: this.quickbooks.ratelimit,
         headers: {
           ...this.quickbooks.requestHeader,
           "Content-Type": "application/text"
@@ -55,7 +56,10 @@ export default abstract class API<T> {
     const realId = typeof id === "number" ? id : Number(id.value);
     const { data } = await httpie.get<T>(
       this.getURLFor(`${this.entityName}/${realId}`),
-      { headers: this.quickbooks.requestHeader }
+      {
+        limit: this.quickbooks.ratelimit,
+        headers: this.quickbooks.requestHeader
+      }
     );
 
     return data;
@@ -68,6 +72,7 @@ export default abstract class API<T> {
     const { data } = await httpie.get<T[]>(
       url,
       {
+        limit: this.quickbooks.ratelimit,
         headers: {
           ...this.quickbooks.requestHeader,
           "Content-Type": "application/text"
@@ -82,6 +87,7 @@ export default abstract class API<T> {
     const { data } = await httpie.post(
       this.getURLFor(`${this.entityName}`),
       {
+        limit: this.quickbooks.ratelimit,
         headers: this.quickbooks.requestHeader,
         body: entity
       }

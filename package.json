@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@myunisoft/httpie": "^1.5.0",
-    "klona": "^2.0.5"
+    "klona": "^2.0.5",
+    "p-ratelimit": "^1.0.1"
   }
 }

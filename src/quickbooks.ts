@@ -3,6 +3,8 @@ import crypto from "crypto";
 
 // Import Third-party Dependencies
 import { klona } from "klona/json";
+import { pRateLimit } from "p-ratelimit";
+import { InlineCallbackAction } from "@myunisoft/httpie";
 
 // Import Internal Dependencies
 import * as APIs from "./API/index";
@@ -31,12 +33,12 @@ type APITypes = typeof APIs;
 
 export default class Quickbooks implements APITypes {
   private minorAPIVersion: number;
-
   private accessToken: string;
   private isSandBox = false;
   private baseQBURL: URL;
   private realmId: string;
 
+  public ratelimit: InlineCallbackAction;
   public Account: typeof APIs.Account;
   public Attachable: typeof APIs.Attachable;
   public CreditMemo: typeof APIs.CreditMemo;
@@ -86,6 +88,14 @@ export default class Quickbooks implements APITypes {
   set sandbox(value: boolean) {
     this.isSandBox = isNullOrUndefined(value) ? false : Boolean(value);
     const URI = new URL(`${kV3QuickbooksEndpoints(this.isSandBox)}${this.realmId}/`);
+    /**
+     * @see https://developer.intuit.com/app/developer/qbo/docs/learn/rest-api-features#limits-and-throttles
+     */
+    this.ratelimit = pRateLimit({
+      interval: 60 * 1_000,
+      rate: 500,
+      concurrency: this.isSandBox ? 100 : 10
+    });
 
     this.baseQBURL = URI;
   }

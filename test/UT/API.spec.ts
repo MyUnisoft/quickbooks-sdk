@@ -1,70 +1,100 @@
 // Require Third-party Dependencies
-import { MockAgent, setGlobalDispatcher } from "@myunisoft/httpie";
+import * as httpie from "@myunisoft/httpie";
 
 // Require Internal Dependencies
-import API from "../../src/API/API" ;
+import { ConditionalCriteria, CriteriaObj } from "../../dist/utils";
 import Quickbooks from "../../src/quickbooks";
+import API from "../../src/API/API" ;
 import * as QB from "../../src/type";
 
-const agent = new MockAgent();
-agent.disableNetConnect();
+// CONSTANTS
+const kMockHttpAgent = new httpie.MockAgent();
+const kOriginalHttpDispatcher = httpie.getGlobalDispatcher();
+const kHttpReplyHeaders = { headers: { "content-type": "application/json" } };
+const kEntityName = "test";
 
-setGlobalDispatcher(agent);
+
+function initiateHttpieMock(originURL: string, pathNameURL :string) {
+  const mockClient = kMockHttpAgent.get(originURL);
+
+  mockClient
+    .intercept({
+      path: (url) => url.startsWith(`${pathNameURL}${kEntityName}`),
+      method: "GET"
+    })
+    .reply(200, {
+      message: "findOne ok",
+      status: "success"
+    }, kHttpReplyHeaders);
+
+  mockClient
+    .intercept({
+      path: (url) => url.startsWith(`${pathNameURL}query`),
+      method: "GET"
+    })
+    .reply(200, [{
+      message: "find ok",
+      status: "success"
+    }], kHttpReplyHeaders);
+
+  mockClient
+    .intercept({
+      path: (url) => url.startsWith(`${pathNameURL}${kEntityName}`),
+      method: "POST"
+    })
+    .reply(200, {}, kHttpReplyHeaders);
+
+  return mockClient;
+}
+
+const qb = new Quickbooks({
+  accessToken: "aze",
+  realmId: "aze",
+  sandbox: true
+});
+
+interface ITest {
+  message: any;
+  status: string;
+}
+
+class Test extends API<ITest> {
+  constructor(parent: Quickbooks) {
+    super(parent, { entityName: kEntityName });
+  }
+}
+const api = new Test(qb);
+
+beforeAll(() => {
+  kMockHttpAgent.disableNetConnect();
+  httpie.setGlobalDispatcher(kMockHttpAgent);
+});
+
+afterAll(() => {
+  kMockHttpAgent.enableNetConnect();
+  httpie.setGlobalDispatcher(kOriginalHttpDispatcher);
+});
+
 
 describe("API", () => {
-  const qb = new Quickbooks({
-    accessToken: "aze",
-    realmId: "aze",
-    sandbox: true
+  let mockClient;
+  beforeEach(() => {
+    mockClient = initiateHttpieMock(qb.baseURL.origin, qb.baseURL.pathname);
   });
 
-  const baseUrl = qb.baseURL.origin;
-  const client = agent.get(baseUrl);
-  const entityName = "test";
-
-  interface ITest {
-    message: any;
-    status: string;
-  }
-
-  class Test extends API<ITest> {
-    constructor(parent: Quickbooks) {
-      super(parent, { entityName });
-    }
-  }
-  const api = new Test(qb);
+  afterEach(async() => {
+    await mockClient.close();
+  });
 
   test("findOne with number", async() => {
     const testId = 62;
-    client
-      .intercept({
-        path: `${qb.baseURL.pathname}${entityName}/${testId}?minorversion=53`,
-        method: "GET"
-      })
-      .reply(200, {
-        message: "findOne ok",
-        status: "success"
-      },
-      { headers: { "content-type": "application/json" } });
-
     const resultAll = await api.findOne(testId);
 
     expect(resultAll.message).toBe("findOne ok");
   });
 
   test("findOne with reference", async() => {
-    const testId = 62;
     const reference: QB.Reference = { value: "62" };
-    client
-      .intercept({
-        path: `${qb.baseURL.pathname}${entityName}/${testId}?minorversion=53`,
-        method: "GET"
-      })
-      .reply(200, {
-        message: "findOne ok",
-        status: "success"
-      },
-      { headers: { "content-type": "application/json" } });
 
     const resultAll = await api.findOne(reference);
 
@@ -72,33 +102,54 @@ describe("API", () => {
   });
 
   test("find", async() => {
-    client
-      .intercept({
-        path: `${qb.baseURL.pathname}query?minorversion=53&query=select+*+from+${entityName}`,
-        method: "GET"
-      })
-      .reply(200, [{
-        message: "find ok",
-        status: "success"
-      }],
-      { headers: { "content-type": "application/json" } });
-
     const resultAll = await api.find();
 
     expect(resultAll[0].message).toBe("find ok");
   });
 
-  test("create", async() => {
-    client
-      .intercept({
-        path: `${qb.baseURL.pathname}${entityName}?minorversion=53`,
-        method: "POST"
-      })
-      .reply(200, {});
+  test("find with criteria as CriteriaObj", async() => {
+    const objTest: CriteriaObj = { field: "test2", operator: ">", value: "10" };
 
-    await api.create({
+    const resultAll = await api.find(objTest);
+
+    expect(resultAll[0].message).toBe("find ok");
+  });
+
+  test("find with criteria as ConditionalCriteria", async() => {
+    const objTest: ConditionalCriteria = {
+      and: [
+        {
+          or: [
+            { field: "test", operator: "<", value: "1" },
+            { field: "test2", operator: ">", value: "10" }
+          ]
+        },
+        {
+          or: [
+            { field: "test3", operator: "ILIKE", value: "bar" },
+            { field: "test4", operator: "=", value: "foo" }
+          ]
+        }
+      ]
+    };
+
+    const resultAll = await api.find(objTest);
+
+    expect(resultAll[0].message).toBe("find ok");
+  });
+
+  test("query", async() => {
+    const resultAll = await api.query("test = 'foobar'");
+
+    expect(resultAll[0].message).toBe("find ok");
+  });
+
+  test("create", async() => {
+    const result = await api.create({
       message: "create ok",
       status: "success"
     });
+
+    expect(result).toStrictEqual({});
   });
 });

@@ -4,6 +4,7 @@ import * as httpie from "@myunisoft/httpie";
 // Require Internal Dependencies
 import Quickbooks from "../quickbooks";
 import * as QB from "../type";
+import { ConditionalCriteria, CriteriaObj, criteriaToSQL } from "../utils";
 
 export interface APIConstructorOptions {
   entityName: string;
@@ -30,9 +31,11 @@ export default abstract class API<T> {
     return URI;
   }
 
-  async find(): Promise<T[]> {
+  async find(criteria?: ConditionalCriteria | CriteriaObj): Promise<T[]> {
     const url = this.getURLFor("query");
-    url.searchParams.set("query", `select * from ${this.entityName}`);
+
+    const whereQuery = typeof criteria === "undefined" ? "" : ` WHERE ${criteriaToSQL(criteria)}`;
+    url.searchParams.set("query", `select * from ${this.entityName}${whereQuery}`);
 
     const { data } = await httpie.get<T[]>(
       url,
@@ -52,6 +55,23 @@ export default abstract class API<T> {
     const { data } = await httpie.get<T>(
       this.getURLFor(`${this.entityName}/${realId}`),
       { headers: this.quickbooks.requestHeader }
+    );
+
+    return data;
+  }
+
+  async query(query: string): Promise<T[]> {
+    const url = this.getURLFor("query");
+    url.searchParams.set("query", query);
+
+    const { data } = await httpie.get<T[]>(
+      url,
+      {
+        headers: {
+          ...this.quickbooks.requestHeader,
+          "Content-Type": "application/text"
+        }
+      }
     );
 
     return data;

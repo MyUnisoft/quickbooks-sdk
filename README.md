@@ -1,4 +1,20 @@
-# Quickbooks-Node-SDK
+<p align="center"><h1 align="center">
+  Quickbooks Node.js SDK
+</h1>
+
+<p align="center">
+  An Intuit Quickbooks SDK for Node.js with modern `async/await` API 💃.
+</p>
+
+<p align="center">
+    <a href="https://github.com/MyUnisoft/quickbooks-sdk"><img src="https://img.shields.io/github/package-json/v/MyUnisoft/quickbooks-sdk?style=flat-square" alt="npm version"></a>
+    <a href="https://github.com/MyUnisoft/quickbooks-sdk"><img src="https://img.shields.io/github/license/MyUnisoft/quickbooks-sdk?style=flat-square" alt="license"></a>
+    <a href="https://github.com/MyUnisoft/quickbooks-sdk"><img src="https://img.shields.io/github/languages/code-size/MyUnisoft/quickbooks-sdk?style=flat-square" alt="size"></a>
+    <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg?style=flat-square" alt="Responsible Disclosure Policy" /></a>
+</p>
+
+## 📢 About
+
 Modern Intuit Quickbooks Node.js API SDK. Some API has been inspired by the [node-quickbooks](https://github.com/mcohen01/node-quickbooks) package.
 
 > ⚠️ We have mainly implemented the features necessary for the use of MyUnisoft. Feel free to pull-request new or missing API.
@@ -810,3 +826,6 @@ export interface FEC {
   }
   ```
 </details>
+
+# License
+MIT

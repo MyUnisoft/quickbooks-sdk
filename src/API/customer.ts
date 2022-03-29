@@ -1,10 +1,9 @@
+// Import Internal Dependencies
 import API from "./API";
-
-// Require Internal Dependencies
 import * as QB from "../type";
 import Quickbooks from "../quickbooks";
 
-interface ICustomer extends QB.RootEntityProperties {
+export interface ICustomer extends QB.RootEntityProperties {
   DisplayName?: string;
   Title?: string;
   GivenName?: string;

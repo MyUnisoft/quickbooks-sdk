@@ -1,8 +1,9 @@
 {
-  "name": "quickbooks-node-sdk",
+  "name": "@myunisoft/quickbooks-node-sdk",
   "version": "1.0.0",
   "description": "Modern Quickbooks Node.js API SDK",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "rimraf dist && tsc",
     "test": "jest --projects jest_ut.config.js"

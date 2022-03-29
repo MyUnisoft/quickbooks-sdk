@@ -1,10 +1,9 @@
+// Import Internal Dependencies
 import API from "./API";
-
-// Require Internal Dependencies
 import * as QB from "../type";
 import Quickbooks from "../quickbooks";
 
-interface IAccount extends QB.RootEntityProperties {
+export interface IAccount extends QB.RootEntityProperties {
   Name: string;
   AcctNum?: string;
   CurrencyRef: QB.Reference;

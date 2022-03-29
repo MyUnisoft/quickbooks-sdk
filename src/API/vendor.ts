@@ -1,10 +1,9 @@
+// Import Internal Dependencies
 import API from "./API";
-
-// Require Internal Dependencies
 import * as QB from "../type";
 import Quickbooks from "../quickbooks";
 
-interface IVendor extends QB.RootEntityProperties {
+export interface IVendor extends QB.RootEntityProperties {
   Title?: string;
   GivenName?: string;
   MiddleName?: string;

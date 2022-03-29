@@ -1,21 +1,18 @@
-// Require Node.js Dependencies
+// Import Node.js Dependencies
 import crypto from "crypto";
 
-// Require Third-party Dependencies
+// Import Third-party Dependencies
 import { klona } from "klona/json";
 
-// Require Internal Dependencies
+// Import Internal Dependencies
 import * as APIs from "./API/index";
 import { Reports } from "./reports/reports";
-
-import {
-  isNullOrUndefined
-} from "./utils";
+import { isNullOrUndefined } from "./utils";
 
 // CONSTANTS
-export const kMaximumMinorVersion = 53;
+export const kMaximumMinorVersion = 63;
 
-function kV3QuickbooksEndpoints(sand) {
+function kV3QuickbooksEndpoints(sand: boolean): string {
   return `https://${sand ? "sandbox-" : ""}quickbooks.api.intuit.com/v3/company/`;
 }
 
@@ -25,7 +22,7 @@ export interface QuickbooksOptions {
   sandbox: boolean;
   /**
    * @see https://developer.intuit.com/app/developer/qbo/docs/learn/explore-the-quickbooks-online-api/minor-versions
-   * @default 53
+   * @default 63
    */
   minorVersion?: number;
 }
@@ -33,7 +30,7 @@ export interface QuickbooksOptions {
 type APITypes = typeof APIs;
 
 export default class Quickbooks implements APITypes {
-  private minorAPIVersion;
+  private minorAPIVersion: number;
 
   private accessToken: string;
   private isSandBox = false;
@@ -68,8 +65,6 @@ export default class Quickbooks implements APITypes {
 
   getURLFor(baseRoute: string, params = {}) {
     const URI = new URL(baseRoute, this.baseURL);
-
-    // URI.searchParams.set("minorversion", String(this.minorVersion));
     for (const [key, value] of Object.entries(params)) {
       URI.searchParams.set(key, String(value));
     }

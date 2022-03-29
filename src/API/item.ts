@@ -1,10 +1,9 @@
+// Import Internal Dependencies
 import API from "./API";
-
-// Require Internal Dependencies
 import * as QB from "../type";
 import Quickbooks from "../quickbooks";
 
-interface IItem extends QB.RootEntityProperties {
+export interface IItem extends QB.RootEntityProperties {
   ItemCategoryType: "Service" | "Service";
   Name: string;
   InvStartDate?: QB.DateType;

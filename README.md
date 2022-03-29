@@ -1,22 +1,36 @@
 # Quickbooks-Node-SDK
-Modern Quickbooks Node.js API SDK
+Modern Intuit Quickbooks Node.js API SDK. Some API has been inspired by the [node-quickbooks](https://github.com/mcohen01/node-quickbooks) package.
 
-## Requirements
+> ⚠️ We have mainly implemented the features necessary for the use of MyUnisoft. Feel free to pull-request new or missing API.
+
+## 🔬 Features.
+
+- Modern `async/await` API.
+- First class support of TypeScript.
+- Implement FEC API.
+- Use [undici](https://undici.nodejs.org/#/) under the hood for http request.
+- Built-in Quickbooks Rate limitation.
+
+## 🚧 Requirements
 
 - [Node.js](https://nodejs.org/en/) v14 or higher.
 
-## Getting Started
+## 🚀 Getting Started
+
+This package is available in the Node Package Repository and can be easily installed with [npm](https://docs.npmjs.com/getting-started/what-is-npm) or [yarn](https://yarnpkg.com).
 
 ```bash
-$ npm install @myunisoft/quickbooks-node-sdk
+$ npm i @myunisoft/quickbooks-node-sdk
+# or
+$ yarn add @myunisoft/quickbooks-node-sdk
 ```
 
-## Usage example
+## 📚 Usage example
 
 ```js
 import Quickbooks from "@myunisoft/quickbooks-node-sdk";
 
-// retrieve your token with another package.
+// Retrieve the token with the `intuit-oauth` package (OAuth2).
 const accessToken = "YourToken";
 
 const Qb = new Quickbooks({
@@ -26,15 +40,18 @@ const Qb = new Quickbooks({
 });
 
 const invoices = await Qb.Invoice.find();
+console.log(invoices);
 
 const account = await Qb.Account.findOne(42);
-
-
-console.log(invoices);
 console.log(account);
+
+const FECs = await Qb.Reports.FEC({
+  start_date: "YYYY-MM-DD"
+});
+console.log(FECs);
 ```
 
-## Quickbooks configuration options
+The Quickbooks constructor options are described by the following TypeScript interface:
 
 ```ts
 export interface QuickbooksOptions {
@@ -42,143 +59,55 @@ export interface QuickbooksOptions {
   accessToken: string;
   sandbox: boolean;
   /**
-   * @see https://developer.intuit.com/app/developer/qbo/docs/learn/explore-the-quickbooks-online-api/minor-versions
-   * @default 53
+   * @default 63
    */
   minorVersion?: number;
 }
 ```
 
-## Reports
+---
 
-```js
-import Quickbooks from "@myunisoft/quickbooks-node-sdk";
-
-// retrieve your token with another package.
-const accessToken = "YourToken";
-
-const Qb = new Quickbooks({
-  accessToken,
-  realmId: "0123456789",
-  sandbox: false
-});
-
-const FECs = await Qb.Reports.FEC({
-  start_date: "YYYY-MM-DD"
-});
-
-
-console.log(FECs);
+You can use the `.find(criteria?: SQLConditionalCriteria | SQLCriteria)` method combined with criteria to dynamically build SQL:
+```ts
+const attachables = await Qb.Attachable.find({
+  and: [
+    { field: "AttachableRef.EntityRef.Type", value: "Invoice", operator: "=" },
+    { field: "AttachableRef.EntityRef.value", value: 1, operator: "=" }
+  ]
+})
 ```
 
-### FEC
-
-<details>
-  <summary>FEC Options</summary>
+<details><summary>TypeScript definition</summary>
 
 ```ts
-type attachmentEnum = "TEMPORARY" | "NONE";
+export type SQLOperator = "<" | ">" | "=" | "<=" | ">=" | "ILIKE" | "LIKE";
 
-interface FECReportOptions {
-  attachment?: attachmentEnum;
-  withQboIdentifier?: boolean;
-  start_date: string;
-  end_date?: string;
-  add_due_date?: boolean;
+export interface SQLConditionalCriteria {
+  or?: SQLCriteria[] | SQLConditionalCriteria[];
+  and?: SQLCriteria[] | SQLConditionalCriteria[];
+}
+
+export interface SQLCriteria {
+  field: string;
+  value: string | number | boolean | null;
+  operator: SQLOperator;
 }
 ```
+
 </details>
-
-<details>
-  <summary>FEC Interface</summary>
-
-```ts
-type ReportBasisEnum = "Cash" | "Accrual";
-
-interface FecRowColData {
-  id?: string;
-  value: string;
-  href?: string;
-}
-
-
-type ColumnTypeEnum = "Account" | "Money";
-interface FecRowColumn {
-  ColType: ColumnTypeEnum;
-  ColTitle?: string;
-  MetaData?: {
-    Name?: string;
-    Value: string;
-  }
-}
-
-interface FecRow {
-  type: "Data" | "Section";
-  ColData: FecRowColData[];
-  Summary?: any;
-  Rows?: any;
-  Header?: any;
-}
-
-interface FEC {
-  Header: {
-    Customer?: string;
-    ReportName?: string;
-    Vendor?: string;
-    Options?: {
-      Name?: string;
-      Value?: string;
-    }
-    Item?: string;
-    Employee?: string;
-    ReportBasis?: ReportBasisEnum;
-    StartPeriod?: string;
-    Class?: string;
-    Currency?: string;
-    EndPeriod?: string;
-    Time?: string;
-    Department?: string;
-    SummarizeColumnsBy?: string;
-  },
-  Rows: {
-    Row: FecRow;
-  },
-  Columns: {
-    Column: FecRowColumn[];
-  }
-}
-```
-</details>
-
 
 ## API
 
 ### Basic API function
-
-#### Utils types
-```ts
-type typeOperator = "<" | ">" | "=" | "<=" | ">=" | "ILIKE" | "LIKE";
-
-export interface ConditionalCriteria {
-  or?: CriteriaObj[] | ConditionalCriteria[];
-  and?: CriteriaObj[] | ConditionalCriteria[];
-}
-
-export interface CriteriaObj {
-  field: string;
-  value: string | number;
-  operator: typeOperator;
-}
-```
 
 #### API Class
 ```ts
 import * as QB from "../type";
 
 abstract class API<T> {
-  async find(criteria?: ConditionalCriteria | CriteriaObj): Promise<T[]>
+  async find(criteria?: SQLConditionalCriteria | SQLCriteria): Promise<T[]>
   async findOne(id: number | QB.Reference): Promise<T>
-  async query(query: string): Promise<T[]>
+  async query(sql: string): Promise<T[]>
   async create(entity: T): Promise<T | unknown>
 }
 ```
@@ -325,6 +254,80 @@ abstract class API<T> {
   DescriptionOnlyLine | DiscountLine | SubTotalLine
   ```
 </details>
+
+---
+
+### FEC
+
+<details><summary>FEC Options</summary>
+
+```ts
+export interface FECReportOptions {
+  attachment?: "TEMPORARY" | "NONE";
+  withQboIdentifier?: boolean;
+  start_date: string;
+  end_date?: string;
+  add_due_date?: boolean;
+}
+```
+</details>
+
+<details><summary>FEC Interface</summary>
+
+```ts
+export interface FECRowColData {
+  id?: string;
+  value: string;
+  href?: string;
+}
+
+export interface FECRowColumn {
+  ColType: "Account" | "Money";
+  ColTitle?: string;
+  MetaData?: {
+    Name?: string;
+    Value: string;
+  }
+}
+
+export interface FECRow {
+  type: "Data" | "Section";
+  ColData: FECRowColData[];
+  Summary?: any;
+  Rows?: any;
+  Header?: any;
+}
+
+export interface FEC {
+  Header: {
+    Customer?: string;
+    ReportName?: string;
+    Vendor?: string;
+    Options?: {
+      Name?: string;
+      Value?: string;
+    }
+    Item?: string;
+    Employee?: string;
+    ReportBasis?: "Cash" | "Accrual";
+    StartPeriod?: string;
+    Class?: string;
+    Currency?: string;
+    EndPeriod?: string;
+    Time?: string;
+    Department?: string;
+    SummarizeColumnsBy?: string;
+  },
+  Rows: {
+    Row: FECRow;
+  },
+  Columns: {
+    Column: FECRowColumn[];
+  }
+}
+```
+</details>
+
 
 
 ---

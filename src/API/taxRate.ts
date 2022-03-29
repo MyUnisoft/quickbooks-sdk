@@ -1,6 +1,5 @@
+// Import Internal Dependencies
 import API from "./API";
-
-// Require Internal Dependencies
 import * as QB from "../type";
 import Quickbooks from "../quickbooks";
 
@@ -9,7 +8,7 @@ interface EffectiveTaxRate {
   EffectiveDate: string;
 }
 
-interface ITaxRate extends QB.RootEntityProperties {
+export interface ITaxRate extends QB.RootEntityProperties {
   RateValue?: string;
   Name?: string;
   AgencyRef?: QB.Reference;

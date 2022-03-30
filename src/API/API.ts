@@ -4,15 +4,14 @@ import * as httpie from "@myunisoft/httpie";
 // Import Internal Dependencies
 import Quickbooks from "../quickbooks";
 import * as QB from "../type";
-import { SQLConditionalCriteria, SQLCriteria, criteriaToSQL } from "../utils";
+import { SQLConditionalCriteria, SQLCriteria, criteriaToSQL, capitalizeFirstLetter } from "../utils";
 
 export interface APIConstructorOptions {
   entityName: string;
 }
 
-export interface APIQueryResponse<EntityName extends string, EntityInterface> {
+export interface APIQueryManyResponse {
   QueryResponse: {
-    EntityName: EntityInterface[];
     startPosition: number;
     maxResults: number,
     totalCount: number;
@@ -25,10 +24,12 @@ export { SQLConditionalCriteria, SQLCriteria };
 export default abstract class API<T> {
   private quickbooks: Quickbooks;
   private entityName: string;
+  private upperCaseEntityName: string;
 
   constructor(quickbooks: Quickbooks, options: APIConstructorOptions) {
     this.quickbooks = quickbooks;
     this.entityName = options.entityName;
+    this.upperCaseEntityName = capitalizeFirstLetter(this.entityName);
   }
 
   getURLFor(baseRoute: string, params: Record<string, string> = {}) {
@@ -48,7 +49,7 @@ export default abstract class API<T> {
     const whereQuery = typeof criteria === "undefined" ? "" : ` WHERE ${criteriaToSQL(criteria)}`;
     url.searchParams.set("query", `select * from ${this.entityName}${whereQuery}`);
 
-    const { data } = await httpie.get<T[]>(
+    const { data } = await httpie.get<APIQueryManyResponse>(
       url,
       {
         limit: this.quickbooks.ratelimit,
@@ -59,11 +60,12 @@ export default abstract class API<T> {
       }
     );
 
-    return data;
+    return data.QueryResponse[this.upperCaseEntityName];
   }
 
   async findOne(id: number | QB.Reference): Promise<T> {
     const realId = typeof id === "number" ? id : Number(id.value);
+
     const { data } = await httpie.get<T>(
       this.getURLFor(`${this.entityName}/${realId}`),
       {
@@ -72,14 +74,14 @@ export default abstract class API<T> {
       }
     );
 
-    return data;
+    return data[this.upperCaseEntityName];
   }
 
   async query(sql: string): Promise<T[]> {
     const url = this.getURLFor("query");
     url.searchParams.set("query", sql);
 
-    const { data } = await httpie.get<T[]>(
+    const { data } = await httpie.get<APIQueryManyResponse>(
       url,
       {
         limit: this.quickbooks.ratelimit,
@@ -90,7 +92,7 @@ export default abstract class API<T> {
       }
     );
 
-    return data;
+    return data.QueryResponse[this.upperCaseEntityName];
   }
 
   async create(entity: T): Promise<T | unknown> {

@@ -31,3 +31,7 @@ export function criteriaToSQL(criteria: SQLConditionalCriteria | SQLCriteria): s
 export function isNullOrUndefined(value: any): boolean {
   return typeof value === "undefined" || value === null;
 }
+
+export function capitalizeFirstLetter(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}

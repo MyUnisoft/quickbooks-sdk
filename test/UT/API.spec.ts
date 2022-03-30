@@ -2,7 +2,7 @@
 import * as httpie from "@myunisoft/httpie";
 
 // Require Internal Dependencies
-import { ConditionalCriteria, CriteriaObj } from "../../dist/utils";
+import { SQLConditionalCriteria, SQLCriteria } from "../../dist/utils";
 import Quickbooks from "../../src/quickbooks";
 import API from "../../src/API/API" ;
 import * as QB from "../../src/type";
@@ -108,7 +108,7 @@ describe("API", () => {
   });
 
   test("find with criteria as CriteriaObj", async() => {
-    const objTest: CriteriaObj = { field: "test2", operator: ">", value: "10" };
+    const objTest: SQLCriteria = { field: "test2", operator: ">", value: "10" };
 
     const resultAll = await api.find(objTest);
 
@@ -116,7 +116,7 @@ describe("API", () => {
   });
 
   test("find with criteria as ConditionalCriteria", async() => {
-    const objTest: ConditionalCriteria = {
+    const objTest: SQLConditionalCriteria = {
       and: [
         {
           or: [

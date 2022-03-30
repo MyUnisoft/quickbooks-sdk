@@ -10,6 +10,16 @@ export interface APIConstructorOptions {
   entityName: string;
 }
 
+export interface APIQueryResponse<EntityName extends string, EntityInterface> {
+  QueryResponse: {
+    EntityName: EntityInterface[];
+    startPosition: number;
+    maxResults: number,
+    totalCount: number;
+  },
+  time: string;
+}
+
 export { SQLConditionalCriteria, SQLCriteria };
 
 export default abstract class API<T> {

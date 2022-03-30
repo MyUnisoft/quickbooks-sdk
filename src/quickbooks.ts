@@ -2,7 +2,6 @@
 import crypto from "crypto";
 
 // Import Third-party Dependencies
-import { klona } from "klona/json";
 import { pRateLimit } from "p-ratelimit";
 import { InlineCallbackAction } from "@myunisoft/httpie";
 
@@ -29,9 +28,7 @@ export interface QuickbooksOptions {
   minorVersion?: number;
 }
 
-type APITypes = typeof APIs;
-
-export default class Quickbooks implements APITypes {
+export default class Quickbooks {
   private minorAPIVersion: number;
   private accessToken: string;
   private isSandBox = false;
@@ -39,15 +36,15 @@ export default class Quickbooks implements APITypes {
   private realmId: string;
 
   public ratelimit: InlineCallbackAction;
-  public Account: typeof APIs.Account;
-  public Attachable: typeof APIs.Attachable;
-  public CreditMemo: typeof APIs.CreditMemo;
-  public Customer: typeof APIs.Customer;
-  public Invoice: typeof APIs.Invoice;
-  public Item: typeof APIs.Item;
-  public Purchase: typeof APIs.Purchase;
-  public TaxRate: typeof APIs.TaxRate;
-  public Vendor: typeof APIs.Vendor;
+  public Account: APIs.Account;
+  public Attachable: APIs.Attachable;
+  public CreditMemo: APIs.CreditMemo;
+  public Customer: APIs.Customer;
+  public Invoice: APIs.Invoice;
+  public Item: APIs.Item;
+  public Purchase: APIs.Purchase;
+  public TaxRate:  APIs.TaxRate;
+  public Vendor: APIs.Vendor;
 
   public Reports: Reports;
 
@@ -61,7 +58,10 @@ export default class Quickbooks implements APITypes {
 
     for (const name of Object.keys(APIs)) {
       const item = APIs[name];
-      this[item.constructor.name] = new item(this);
+      if (item.toString().startsWith("class ")) {
+        const classObject = new item(this);
+        this[classObject.constructor.name] = classObject;
+      }
     }
   }
 
@@ -79,10 +79,10 @@ export default class Quickbooks implements APITypes {
   }
 
   get requestHeader() {
-    return klona({
+    return{
       Authorization: `Bearer ${this.accessToken}`,
       Accept: "application/json"
-    });
+    };
   }
 
   set sandbox(value: boolean) {

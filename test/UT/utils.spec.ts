@@ -1,10 +1,10 @@
 // Require Internal Dependencies
-import { ConditionalCriteria, CriteriaObj, criteriaToSQL } from "../../dist/utils";
+import { SQLConditionalCriteria, SQLCriteria, criteriaToSQL } from "../../dist/utils";
 
 
 describe("criteriaToSQL", () => {
   test("Criteria as CriteriaObj with number", async() => {
-    const objTest: CriteriaObj = { field: "test", operator: ">", value: 10 };
+    const objTest: SQLCriteria = { field: "test", operator: ">", value: 10 };
 
     const result = criteriaToSQL(objTest);
 
@@ -12,7 +12,7 @@ describe("criteriaToSQL", () => {
   });
 
   test("Criteria as CriteriaObj with string", async() => {
-    const objTest: CriteriaObj = { field: "test", operator: ">", value: "10" };
+    const objTest: SQLCriteria = { field: "test", operator: ">", value: "10" };
 
     const result = criteriaToSQL(objTest);
 
@@ -20,7 +20,7 @@ describe("criteriaToSQL", () => {
   });
 
   test("Criteria as ConditionalCriteria", async() => {
-    const objTest: ConditionalCriteria = {
+    const objTest: SQLConditionalCriteria = {
       and: [
         {
           or: [
